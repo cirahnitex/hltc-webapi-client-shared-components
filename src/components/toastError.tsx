@@ -92,7 +92,7 @@ window.addEventListener('load', function() {
 });
 
 
-export default function toastError(msg:string|Error) {
+export function toastError(msg:string|Error) {
     if(msg instanceof Error) {
         console.error(msg);
         msg = msg.message || msg.toString();

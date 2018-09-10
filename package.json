@@ -1,6 +1,6 @@
 {
   "name": "hltc-webapi-client-shared-components",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "dependencies": {
     "autoprefixer": "7.1.6",
     "babel-jest": "^22.1.0",
@@ -53,8 +53,11 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "tsc": "tsc"
   },
+  "main": "dist/lib.js",
+  "types": "dist/lib.d.ts",
   "devDependencies": {
     "@types/jest": "^23.3.1",
     "@types/node": "^10.9.4",

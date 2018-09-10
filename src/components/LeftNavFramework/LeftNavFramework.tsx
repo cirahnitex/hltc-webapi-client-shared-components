@@ -1,7 +1,7 @@
 import * as React from 'react';
 import NestedList, {ListEntry} from './NestedList';
 import {style} from "typestyle";
-import {Caption, Title} from "../Typographies";
+import {Caption, Title} from "../typographies";
 import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography/Typography";
 import {grey} from "@material-ui/core/colors";

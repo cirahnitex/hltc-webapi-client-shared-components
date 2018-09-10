@@ -1,0 +1,1 @@
+{"version":3,"file":"isTouchDevice.js","sourceRoot":"","sources":["../../src/util/isTouchDevice.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,IAAM,aAAa,GAAG,CAAC,CAAC,cAAc,IAAI,MAAM,CAAC;OACjD,CAAC,SAAS,CAAC,cAAc,GAAG,CAAC,CAAC;OAC9B,CAAC,SAAS,CAAC,gBAAgB,GAAG,CAAC,CAAC,CAAC,CAAC"}
