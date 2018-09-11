@@ -3,6 +3,8 @@ import {style} from "typestyle";
 
 const rootCss = style({
     flexGrow: 1,
+    display: 'flex',
+    flexDirection: "column",
     padding: "72px 32px 16px 32px",
     $nest: {
         "@media (min-width: 600px)": {
