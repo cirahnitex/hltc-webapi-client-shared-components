@@ -11,10 +11,6 @@ var styles = function (theme) { return ({
     grow: {
         flexGrow: 1,
     },
-    menuButton: {
-        marginLeft: -12,
-        marginRight: 20,
-    },
     title: {
         padding: '0 16px',
     }
@@ -24,7 +20,7 @@ function BackSearchAppBar(props) {
     return (React.createElement("div", { className: classes.root },
         React.createElement(AppBar, { style: { zIndex: 0 } },
             React.createElement(Toolbar, null,
-                React.createElement(IconButton, { className: classes.menuButton, color: "inherit", "aria-label": "Open drawer", onClick: onIconClick }, icon),
+                React.createElement(IconButton, { color: "inherit", onClick: onIconClick }, icon),
                 React.createElement(Typography, { className: classes.title, variant: "title", color: "inherit", noWrap: true }, title),
                 children))));
 }

@@ -13,10 +13,6 @@ const styles = (theme:Theme) => ({
     grow: {
         flexGrow: 1,
     } as CSSProperties,
-    menuButton: {
-        marginLeft: -12,
-        marginRight: 20,
-    } as CSSProperties,
     title: {
         padding: '0 16px',
     } as CSSProperties
@@ -36,7 +32,7 @@ function BackSearchAppBar(props:Props) {
         <div className={classes.root}>
             <AppBar style={{zIndex:0}}>
                 <Toolbar>
-                    <IconButton className={classes.menuButton} color="inherit" aria-label="Open drawer" onClick={onIconClick}>
+                    <IconButton color="inherit" onClick={onIconClick}>
                         {icon}
                     </IconButton>
                     <Typography className={classes.title} variant="title" color="inherit" noWrap>

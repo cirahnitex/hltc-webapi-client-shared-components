@@ -4,7 +4,6 @@ import { CSSProperties } from "@material-ui/core/styles/withStyles";
 declare const styles: (theme: Theme) => {
     root: CSSProperties;
     grow: CSSProperties;
-    menuButton: CSSProperties;
     title: CSSProperties;
 };
 interface Props {
@@ -14,5 +13,5 @@ interface Props {
     title: string;
     children?: React.ReactFragment;
 }
-declare const _default: React.ComponentType<import("@material-ui/core").Overwrite<Pick<Props, "title" | "icon" | "children" | "classes" | "onIconClick">, import("@material-ui/core/styles/withStyles").StyledComponentProps<"title" | "root" | "grow" | "menuButton">>>;
+declare const _default: React.ComponentType<import("@material-ui/core").Overwrite<Pick<Props, "title" | "icon" | "children" | "classes" | "onIconClick">, import("@material-ui/core/styles/withStyles").StyledComponentProps<"title" | "root" | "grow">>>;
 export default _default;

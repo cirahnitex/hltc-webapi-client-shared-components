@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
-import LeftNavFramework from "./components/LeftNavFramework/LeftNavFramework";
 import Portal from "@material-ui/core/Portal/Portal";
+import IconAppBar from "./components/commonAppBars/IconAppBar";
+import BackIcon from "@material-ui/icons/ArrowBack";
+import AppBarMain from "./components/commonAppBars/AppBarMain";
 var Page0 = function (_a) {
     var addonWrap = _a.addonWrap;
     return React.createElement("div", null,
@@ -15,7 +17,9 @@ var items = [
         content: function (addonWrap) { return React.createElement(Page0, { addonWrap: addonWrap }); }
     }
 ];
-var App = function () { return React.createElement(LeftNavFramework, { title: "default title", items: items }); };
+var App = function () { return React.createElement("div", null,
+    React.createElement(IconAppBar, { title: "default title", icon: React.createElement(BackIcon, null), onIconClick: function () { } }),
+    React.createElement(AppBarMain, null, "this is content")); };
 var root = document.querySelector("#root");
 ReactDom.render(React.createElement(App, null), root);
 //# sourceMappingURL=index.js.map
