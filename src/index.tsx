@@ -1,30 +1,24 @@
 import * as React from "react"
 import * as ReactDom from "react-dom"
-import Portal from "@material-ui/core/Portal/Portal";
-import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
-import BackIcon from "@material-ui/icons/ArrowBack";
-import AppBarMain from "./components/commonAppBars/AppBarMain";
+import createEnhancedTable from "./components/EnhancedTable";
 
-const Page0 = ({addonWrap}:{addonWrap:HTMLDivElement})=>{
-    return <div>
-        <Portal container={addonWrap}>
-            <div>addon of page 0</div>
-        </Portal>
-        content of page 0
-    </div>
-};
+interface Item {
+    a: number;
+    b: number;
+}
 
-const items = [
-    {
-        caption: "page#0",
-        content: (addonWrap:HTMLDivElement)=><Page0 addonWrap={addonWrap} />
-    }
+const EnhancedTable = createEnhancedTable<Item>((item:Item)=>item.a,
+    {field: "a", label: "Item_ID"},
+    {field: "b", label: "value", numeric: true, editable: true}
+    );
+
+const items:Item[] = [
+    {a: 1, b:2},
+    {a: 2, b:3}
 ];
 
-const App = ()=><div>
-    <IconSearchAppBar title={"default title"} icon={<BackIcon/>} onIconClick={()=>{}}/>
-    <AppBarMain>this is content</AppBarMain>
-</div>;
+function App() {
+    return <EnhancedTable title={"enhanced table"} items={items} onItemEdit={(id, field, value)=>console.log(id, field, value)}/>
+}
 
-const root = document.querySelector("#root");
-ReactDom.render(<App />, root);
+ReactDom.render(<App />, document.querySelector('#root'));

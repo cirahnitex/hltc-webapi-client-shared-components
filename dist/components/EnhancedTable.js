@@ -47,16 +47,16 @@ function createEnhancedTableHeadComponent(columnData) {
                     numSelected != null && React.createElement(TableCell, { padding: "checkbox" },
                         React.createElement(Checkbox, { indeterminate: numSelected > 0 && numSelected < rowCount, checked: numSelected === rowCount, onChange: onSelectAllClick })),
                     columnData.map(function (column) {
-                        return (React.createElement(TableCell, { key: column.key, numeric: column.numeric, padding: column.disablePadding ? 'none' : 'default', sortDirection: orderBy === column.key ? order : false },
+                        return (React.createElement(TableCell, { key: column.field, numeric: column.numeric, padding: column.disablePadding ? 'none' : 'default', sortDirection: orderBy === column.field ? order : false },
                             column.noSorting && column.label,
                             !column.noSorting && React.createElement(Tooltip, { title: "Sort", placement: column.numeric ? 'bottom-end' : 'bottom-start', enterDelay: 300 },
-                                React.createElement(TableSortLabel, { active: orderBy === column.key, direction: order, onClick: _this.createSortHandler(column.key) }, column.label || column.key))));
+                                React.createElement(TableSortLabel, { active: orderBy === column.field, direction: order, onClick: _this.createSortHandler(column.field) }, column.label || column.field))));
                     }, this))));
         };
         return class_1;
     }(React.Component));
 }
-function createEnhancedToolbar(columnData) {
+function createEnhancedToolbar() {
     var toolbarStyles = function (theme) { return ({
         root: {
             paddingRight: theme.spacing.unit,
@@ -94,9 +94,13 @@ function createEnhancedToolbar(columnData) {
     };
     return withStyles(toolbarStyles)(EnhancedTableToolbar);
 }
-export default function createEnhancedTableComponent(columnData) {
-    var EnhancedTableToolbar = createEnhancedToolbar(columnData);
-    var EnhancedTableHead = createEnhancedTableHeadComponent(columnData);
+export default function createEnhancedTableComponent(getID) {
+    var columns = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        columns[_i - 1] = arguments[_i];
+    }
+    var EnhancedTableToolbar = createEnhancedToolbar();
+    var EnhancedTableHead = createEnhancedTableHeadComponent(columns);
     var styles = function (theme) { return ({
         root: {
             width: '100%',
@@ -131,7 +135,7 @@ export default function createEnhancedTableComponent(columnData) {
             _this.handleSelectAllClick = function (event, checked) {
                 var selection = [];
                 if (checked) {
-                    selection = _this.props.items.map(function (x) { return x.id; });
+                    selection = _this.props.items.map(function (x) { return getID(x); });
                 }
                 if (_this.props.onRequestSelectionChange)
                     _this.props.onRequestSelectionChange(selection);
@@ -164,17 +168,21 @@ export default function createEnhancedTableComponent(columnData) {
                 _this.setState({ rowsPerPage: parseInt(e.target.value) });
             };
             _this.handleCellClick = function (el, id, column, value) {
-                _this.setState({ editingAnchorEl: el, editingId: id, editingColumn: column, editingValue: value });
+                _this.setState({ editingAnchorEl: el, editingId: id, editingColumn: column, editingValue: value, editingOriValue: value });
             };
             _this.handleEditingValueChange = function (e) { return _this.setState({ editingValue: e.target.value }); };
-            _this.handleEditingKeyPress = function (e) {
+            _this.handleEditingKeyDown = function (e) {
                 if (e.which === 13) {
-                    // TODO: handle key press
-                    console.log("value should change!");
                     _this.handleCloseEditing();
                 }
             };
-            _this.handleCloseEditing = function () { return _this.setState({ editingAnchorEl: null, editingId: null, editingColumn: null, editingValue: null }); };
+            _this.handleCloseEditing = function () {
+                var _a = _this.state, editingId = _a.editingId, editingColumn = _a.editingColumn, editingValue = _a.editingValue, editingOriValue = _a.editingOriValue;
+                if (editingOriValue !== editingValue && _this.props.onItemEdit) {
+                    _this.props.onItemEdit(editingId, editingColumn, editingValue);
+                }
+                _this.setState({ editingAnchorEl: null, editingId: null, editingColumn: null, editingValue: null, editingOriValue: null });
+            };
             _this.isSelected = function (id) { return _this.props.selection && _this.props.selection.indexOf(id) !== -1; };
             _this.state = {
                 order: 'asc',
@@ -184,7 +192,8 @@ export default function createEnhancedTableComponent(columnData) {
                 editingAnchorEl: null,
                 editingId: null,
                 editingColumn: null,
-                editingValue: null
+                editingValue: null,
+                editingOriValue: null,
             };
             return _this;
         }
@@ -194,9 +203,9 @@ export default function createEnhancedTableComponent(columnData) {
                 return this.props.items;
             // find less comparator
             var compareFunction = function (a, b) { return a[orderBy] < b[orderBy] ? -1 : 1; };
-            for (var _i = 0, columnData_1 = columnData; _i < columnData_1.length; _i++) {
-                var column = columnData_1[_i];
-                if (column.key === orderBy) {
+            for (var _i = 0, columns_1 = columns; _i < columns_1.length; _i++) {
+                var column = columns_1[_i];
+                if (column.field === orderBy) {
                     if (typeof (column.compareFunction) === 'function') {
                         compareFunction = column.compareFunction;
                     }
@@ -206,6 +215,20 @@ export default function createEnhancedTableComponent(columnData) {
             return order === 'desc'
                 ? this.props.items.slice().sort(function (a, b) { return -compareFunction(a, b); })
                 : this.props.items.slice().sort(compareFunction);
+        };
+        class_2.prototype.getEditingPopoverOrigin = function () {
+            var editingColumn = this.state.editingColumn;
+            if (editingColumn) {
+                for (var _i = 0, columns_2 = columns; _i < columns_2.length; _i++) {
+                    var column = columns_2[_i];
+                    if (column.field === editingColumn) {
+                        if (column.numeric)
+                            return { horizontal: "right", vertical: "top" };
+                        break;
+                    }
+                }
+            }
+            return { horizontal: "left", vertical: "top" };
         };
         class_2.prototype.render = function () {
             var _this = this;
@@ -222,11 +245,11 @@ export default function createEnhancedTableComponent(columnData) {
                         React.createElement(EnhancedTableHead, { numSelected: numSelected, order: order, orderBy: orderBy, onSelectAllClick: this.handleSelectAllClick, onRequestSort: this.handleRequestSort, rowCount: data.length }),
                         React.createElement(TableBody, null,
                             data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(function (n, i) {
-                                var isSelected = _this.isSelected(n.id);
-                                return (React.createElement(TableRow, { hover: true, role: "checkbox", "aria-checked": isSelected, tabIndex: -1, key: n.id, selected: isSelected },
+                                var isSelected = _this.isSelected(getID(n));
+                                return (React.createElement(TableRow, { hover: true, role: "checkbox", "aria-checked": isSelected, tabIndex: -1, key: getID(n), selected: isSelected },
                                     numSelected != null && React.createElement(TableCell, { padding: "checkbox" },
-                                        React.createElement(Checkbox, { checked: isSelected, onChange: function (e) { return _this.handleRowCheckChange(n.id); } })),
-                                    columnData.map(function (column) { return React.createElement(TableCell, { key: column.key, padding: column.disablePadding ? "none" : undefined, numeric: column.numeric, onClick: column.editable ? function (e) { return _this.handleCellClick(e.currentTarget, n.id, column.key, n[column.key].toString()); } : undefined, style: column.editable ? { cursor: "pointer" } : undefined }, n[column.key]); })));
+                                        React.createElement(Checkbox, { checked: isSelected, onChange: function (e) { return _this.handleRowCheckChange(getID(n)); } })),
+                                    columns.map(function (column) { return React.createElement(TableCell, { key: column.field, padding: column.disablePadding ? "none" : undefined, numeric: column.numeric, onClick: column.editable ? function (e) { return _this.handleCellClick(e.currentTarget, getID(n), column.field, n[column.field].toString()); } : undefined, style: column.editable ? { cursor: "pointer" } : undefined }, n[column.field]); })));
                             }),
                             emptyRows > 0 && showPagination && (React.createElement(TableRow, { style: { height: 49 * emptyRows } },
                                 React.createElement(TableCell, { colSpan: 6 })))))),
@@ -237,9 +260,9 @@ export default function createEnhancedTableComponent(columnData) {
                         'aria-label': 'Next Page',
                     }, onChangePage: this.handleChangePage, onChangeRowsPerPage: this.handleChangeRowsPerPage }),
                 !showPagination && React.createElement("div", { style: { height: 8 } }),
-                React.createElement(Popover, { anchorEl: editingAnchorEl, open: !!editingAnchorEl, onClose: this.handleCloseEditing },
+                React.createElement(Popover, { anchorEl: editingAnchorEl, open: !!editingAnchorEl, onClose: this.handleCloseEditing, anchorOrigin: this.getEditingPopoverOrigin() },
                     React.createElement("div", { className: classes.editingWrap },
-                        React.createElement(Input, { value: editingValue || "", onChange: this.handleEditingValueChange, className: classes.editingInput })))));
+                        React.createElement(Input, { value: editingValue || "", onChange: this.handleEditingValueChange, className: classes.editingInput, onKeyDown: this.handleEditingKeyDown })))));
         };
         return class_2;
     }(React.PureComponent));

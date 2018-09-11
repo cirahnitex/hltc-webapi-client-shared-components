@@ -69,7 +69,8 @@ const classes = {
     }),
     appBarAddonsWrap: style({
         flexGrow: 1,
-        display: "flex"
+        display: 'flex',
+        flexDirection: "column",
     }),
     navIconHide: style({
         $nest: {
@@ -100,6 +101,7 @@ const classes = {
     content: style({
         flexGrow: 1,
         padding: "72px 32px 16px 32px",
+        display: 'flex',
         $nest: {
             [mediumCss]: {
                 padding: "80px 40px 16px 40px",

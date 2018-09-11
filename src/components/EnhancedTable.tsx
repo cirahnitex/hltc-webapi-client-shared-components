@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead/TableHead";
 import TableCell from "@material-ui/core/TableCell/TableCell";
 import Checkbox from "@material-ui/core/Checkbox/Checkbox";
 import TableSortLabel from "@material-ui/core/TableSortLabel/TableSortLabel";
-import {Omit, Theme} from "@material-ui/core";
+import {Theme} from "@material-ui/core";
 import {lighten} from "@material-ui/core/styles/colorManipulator";
 import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import Typography from "@material-ui/core/Typography/Typography";
@@ -16,7 +16,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper/Paper";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
-import Popover from "@material-ui/core/Popover/Popover";
+import Popover, {PopoverOrigin} from "@material-ui/core/Popover/Popover";
 import Input from "@material-ui/core/Input/Input";
 
 const Tooltip = require("@material-ui/core/umd/material-ui.development").Tooltip;
@@ -24,19 +24,19 @@ const Tooltip = require("@material-ui/core/umd/material-ui.development").Tooltip
 const TableRow = require("@material-ui/core/umd/material-ui.development").TableRow;
 
 
-type ColumnData<ItemType> = {
-    key: keyof ItemType & string,
+type FieldConfig<ItemType> = {
+    field: keyof ItemType & string,
     numeric?: boolean,
     disablePadding?: boolean,
     label?: string,
     noSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
     editable?: boolean
-}[];
+};
 
 
 
-function createEnhancedTableHeadComponent<ItemType>(columnData:ColumnData<ItemType>) {
+function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemType>[]) {
     type Key = keyof ItemType;
     interface Props {
         numSelected: number | null,
@@ -66,10 +66,10 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:ColumnData<ItemTy
                         {columnData.map(column => {
                             return (
                                 <TableCell
-                                    key={column.key}
+                                    key={column.field}
                                     numeric={column.numeric}
                                     padding={column.disablePadding ? 'none' : 'default'}
-                                    sortDirection={orderBy === column.key ? order : false}
+                                    sortDirection={orderBy === column.field ? order : false}
                                 >
                                     {column.noSorting && column.label}
                                     {!column.noSorting && <Tooltip
@@ -78,11 +78,11 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:ColumnData<ItemTy
                                         enterDelay={300}
                                     >
                                         <TableSortLabel
-                                            active={orderBy === column.key}
+                                            active={orderBy === column.field}
                                             direction={order}
-                                            onClick={this.createSortHandler(column.key)}
+                                            onClick={this.createSortHandler(column.field)}
                                         >
-                                            {column.label || column.key}
+                                            {column.label || column.field}
                                         </TableSortLabel>
                                     </Tooltip>}
                                 </TableCell>
@@ -95,7 +95,7 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:ColumnData<ItemTy
     }
 }
 
-function createEnhancedToolbar<ItemType>(columnData:ColumnData<ItemType>) {
+function createEnhancedToolbar<ItemType>() {
 
     const toolbarStyles = (theme:Theme) => ({
         root: {
@@ -153,22 +153,26 @@ function createEnhancedToolbar<ItemType>(columnData:ColumnData<ItemType>) {
         );
     };
 
-    return withStyles(toolbarStyles)(EnhancedTableToolbar) as React.ComponentType<Omit<Props, 'classes'>>;
+    return withStyles(toolbarStyles)(EnhancedTableToolbar);
 }
 
-interface EnhancedTableProps<ItemType extends {id:string|number}> {
+interface EnhancedTableProps<ItemType, IDType> {
     title: string,
     items: ItemType[],
-    selection?: ItemType["id"][],
-    onRequestSelectionChange?: (selection:ItemType["id"][])=>void,
-    actions?: React.ReactFragment
+    selection?: IDType[],
+    onRequestSelectionChange?: (selection:IDType[])=>any,
+    actions?: React.ReactFragment,
+    onItemEdit?: (id:IDType, field:string, value:string)=>any,
 }
 
-export default function createEnhancedTableComponent<ItemType extends {id:string|number}>(columnData:ColumnData<ItemType>):EnhancedTableProps<ItemType> {
+export default function createEnhancedTableComponent<ItemType>(getID:(item:ItemType)=>number, ...columns:FieldConfig<ItemType>[]):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+
+export default function createEnhancedTableComponent<ItemType>(getID:(item:ItemType)=>string, ...columns:FieldConfig<ItemType>[]):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType, IDType extends number|string>(getID:(item:ItemType)=>IDType, ...columns:FieldConfig<ItemType>[]):React.ComponentType<EnhancedTableProps<ItemType, IDType>> {
     type Key = keyof ItemType;
-    type ID = ItemType["id"];
-    const EnhancedTableToolbar = createEnhancedToolbar<ItemType>(columnData);
-    const EnhancedTableHead = createEnhancedTableHeadComponent<ItemType>(columnData);
+    const EnhancedTableToolbar = createEnhancedToolbar<ItemType>();
+    const EnhancedTableHead = createEnhancedTableHeadComponent<ItemType>(columns);
     const styles = (theme:Theme) => ({
         root: {
             width: '100%',
@@ -188,7 +192,7 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
             width: 240,
         }
     });
-    type Props = EnhancedTableProps<ItemType> & {
+    type Props = EnhancedTableProps<ItemType, IDType> & {
         classes: Record<keyof ReturnType<typeof styles>, string>
     }
     interface State {
@@ -197,9 +201,10 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
         page: number,
         rowsPerPage: number,
         editingAnchorEl: HTMLElement|null;
-        editingId: ID|null,
+        editingId: IDType|null,
         editingColumn: string|null,
-        editingValue: string|null
+        editingValue: string|null,
+        editingOriValue: string|null,
     }
     const EnhancedTable = class extends React.PureComponent<Props, State> {
         constructor(props:Props) {
@@ -212,7 +217,8 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
                 editingAnchorEl: null,
                 editingId:null,
                 editingColumn:null,
-                editingValue:null
+                editingValue:null,
+                editingOriValue: null,
             }
         }
         getSortedData() {
@@ -221,8 +227,8 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
 
             // find less comparator
             let compareFunction = (a:ItemType, b:ItemType):number=>a[orderBy]<b[orderBy]?-1:1;
-            for(const column of columnData) {
-                if(column.key === orderBy) {
+            for(const column of columns) {
+                if(column.field === orderBy) {
                     if(typeof(column.compareFunction) === 'function') {
                         compareFunction = column.compareFunction;
                     }
@@ -245,17 +251,17 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
             this.setState({ order, orderBy });
         };
         handleSelectAllClick = (event:any, checked:boolean) => {
-            let selection:(ID)[] = [];
+            let selection:(IDType)[] = [];
             if (checked) {
-                selection = this.props.items.map(x=>x.id);
+                selection = this.props.items.map(x=>getID(x));
             }
             if(this.props.onRequestSelectionChange) this.props.onRequestSelectionChange(selection);
         };
-        handleRowCheckChange = (id:ID) => {
+        handleRowCheckChange = (id:IDType) => {
             const { selection } = this.props;
             if(selection == null) return;
             const selectedIndex = selection.indexOf(id);
-            let newSelected:(ID)[] = [];
+            let newSelected:(IDType)[] = [];
 
             if (selectedIndex === -1) {
                 newSelected = newSelected.concat(selection, id);
@@ -278,19 +284,35 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
         handleChangeRowsPerPage = (e:React.ChangeEvent<HTMLInputElement>)=>{
             this.setState({rowsPerPage:parseInt(e.target.value)})
         };
-        handleCellClick = (el:HTMLElement, id:ID, column:string, value:string)=>{
-            this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingValue:value})
+        handleCellClick = (el:HTMLElement, id:IDType, column:string, value:string)=>{
+            this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingValue:value, editingOriValue:value})
         };
         handleEditingValueChange = (e:React.ChangeEvent<HTMLInputElement>)=>this.setState({editingValue:e.target.value});
-        handleEditingKeyPress = (e:React.KeyboardEvent<HTMLInputElement>)=>{
+        handleEditingKeyDown = (e:React.KeyboardEvent<HTMLInputElement>)=>{
             if(e.which===13) {
-                // TODO: handle key press
-                console.log("value should change!");
                 this.handleCloseEditing();
             }
         };
-        handleCloseEditing = ()=>this.setState({editingAnchorEl:null, editingId: null, editingColumn:null, editingValue:null});
-        isSelected = (id:(ID)) => this.props.selection && this.props.selection.indexOf(id) !== -1;
+        handleCloseEditing = ()=>{
+            const {editingId, editingColumn, editingValue, editingOriValue} = this.state;
+            if(editingOriValue !== editingValue && this.props.onItemEdit) {
+                this.props.onItemEdit(editingId!, editingColumn!, editingValue!);
+            }
+            this.setState({editingAnchorEl:null, editingId: null, editingColumn:null, editingValue:null, editingOriValue:null});
+        };
+        isSelected = (id:(IDType)) => this.props.selection && this.props.selection.indexOf(id) !== -1;
+        getEditingPopoverOrigin():PopoverOrigin {
+            const {editingColumn} = this.state;
+            if(editingColumn) {
+                for(const column of columns) {
+                    if(column.field === editingColumn) {
+                        if (column.numeric) return {horizontal: "right", vertical: "top"};
+                        break;
+                    }
+                }
+            }
+            return {horizontal: "left", vertical: "top"}
+        }
         render() {
             const {classes, title, selection, actions} = this.props;
             const {order, orderBy, page, rowsPerPage, editingAnchorEl, editingValue} = this.state;
@@ -313,26 +335,26 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
                             />
                             <TableBody>
                                 {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n,i) => {
-                                    const isSelected = this.isSelected(n.id);
+                                    const isSelected = this.isSelected(getID(n));
                                     return (
                                         <TableRow
                                             hover
                                             role="checkbox"
                                             aria-checked={isSelected}
                                             tabIndex={-1}
-                                            key={n.id}
+                                            key={getID(n)}
                                             selected={isSelected}
                                         >
                                             {numSelected != null && <TableCell padding="checkbox">
-                                                <Checkbox checked={isSelected} onChange={e=>this.handleRowCheckChange(n.id)}/>
+                                                <Checkbox checked={isSelected} onChange={e=>this.handleRowCheckChange(getID(n))}/>
                                             </TableCell>}
-                                            {columnData.map(column=><TableCell
-                                                key={column.key}
+                                            {columns.map(column=><TableCell
+                                                key={column.field}
                                                 padding={column.disablePadding?"none":undefined}
                                                 numeric={column.numeric}
-                                                onClick={column.editable?(e)=>this.handleCellClick(e.currentTarget,n.id,column.key, n[column.key].toString()):undefined}
+                                                onClick={column.editable?(e)=>this.handleCellClick(e.currentTarget,getID(n),column.field, n[column.field].toString()):undefined}
                                                 style={column.editable?{cursor:"pointer"}:undefined}
-                                            >{n[column.key] as any}</TableCell>)}
+                                            >{n[column.field] as any}</TableCell>)}
                                         </TableRow>
                                     );
                                 })}
@@ -360,14 +382,14 @@ export default function createEnhancedTableComponent<ItemType extends {id:string
                         onChangeRowsPerPage={this.handleChangeRowsPerPage}
                     />}
                     {!showPagination && <div style={{height:8}} />}
-                    <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing}>
+                    <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing} anchorOrigin={this.getEditingPopoverOrigin()}>
                         <div className={classes.editingWrap}>
-                            <Input value={editingValue || ""} onChange={this.handleEditingValueChange} className={classes.editingInput}/>
+                            <Input value={editingValue || ""} onChange={this.handleEditingValueChange} className={classes.editingInput} onKeyDown={this.handleEditingKeyDown}/>
                         </div>
                     </Popover>
                 </Paper>
             );
         }
     };
-    return withStyles(styles)(EnhancedTable) as any;
+    return withStyles(styles)(EnhancedTable);
 }
