@@ -11,7 +11,7 @@ export default class Api {
     }
 
     static resolve(path: string) {
-        if (path.indexOf('/') === 0 && window.location.host === 'localhost:8080') return "http://hltc.cs.ust.hk/webapi" + path;
+        if (path.indexOf('/') === 0 && window.location.host.startsWith('localhost')) return "http://hltc.cs.ust.hk/webapi" + path;
         return '/webapi' + path;
     }
 
