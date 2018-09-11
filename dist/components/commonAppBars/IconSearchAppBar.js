@@ -46,7 +46,7 @@ var styles = function (theme) {
             },
             _a),
         searchIcon: {
-            width: theme.spacing.unit * 9,
+            width: theme.spacing.unit * 7,
             height: '100%',
             position: 'absolute',
             pointerEvents: 'none',
@@ -85,7 +85,7 @@ function IconSearchAppBar(props) {
             React.createElement(Input, { placeholder: "Search\u2026", disableUnderline: true, classes: {
                     root: classes.inputRoot,
                     input: classes.inputInput,
-                }, value: searchValue, onChange: function (e) { return onSearchValueChange(e.target.value); } })));
+                }, value: searchValue, onChange: onSearchValueChange ? function (e) { return onSearchValueChange(e.target.value); } : undefined })));
 }
 export default withStyles(styles)(IconSearchAppBar);
 //# sourceMappingURL=IconSearchAppBar.js.map

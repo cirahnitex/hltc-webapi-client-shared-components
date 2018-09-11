@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
 import Portal from "@material-ui/core/Portal/Portal";
-import IconAppBar from "./components/commonAppBars/IconAppBar";
+import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
 import BackIcon from "@material-ui/icons/ArrowBack";
 import AppBarMain from "./components/commonAppBars/AppBarMain";
 var Page0 = function (_a) {
@@ -18,7 +18,7 @@ var items = [
     }
 ];
 var App = function () { return React.createElement("div", null,
-    React.createElement(IconAppBar, { title: "default title", icon: React.createElement(BackIcon, null), onIconClick: function () { } }),
+    React.createElement(IconSearchAppBar, { title: "default title", icon: React.createElement(BackIcon, null), onIconClick: function () { } }),
     React.createElement(AppBarMain, null, "this is content")); };
 var root = document.querySelector("#root");
 ReactDom.render(React.createElement(App, null), root);

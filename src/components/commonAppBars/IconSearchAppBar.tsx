@@ -25,7 +25,7 @@ const styles = (theme:Theme) => ({
         },
     } as CSSProperties,
     searchIcon: {
-        width: theme.spacing.unit * 9,
+        width: theme.spacing.unit * 7,
         height: '100%',
         position: 'absolute',
         pointerEvents: 'none',
@@ -41,7 +41,7 @@ const styles = (theme:Theme) => ({
         paddingTop: theme.spacing.unit,
         paddingRight: theme.spacing.unit,
         paddingBottom: theme.spacing.unit,
-        paddingLeft: theme.spacing.unit * 10,
+        paddingLeft: theme.spacing.unit * 7,
         transition: theme.transitions.create('width'),
         width: '100%',
         [theme.breakpoints.up('sm')]: {
@@ -58,8 +58,8 @@ interface Props {
     icon: React.ReactElement<any>;
     onIconClick: ()=>any;
     title: string;
-    searchValue: string;
-    onSearchValueChange: (x:string)=>any;
+    searchValue?: string;
+    onSearchValueChange?: (x:string)=>any;
 }
 
 function IconSearchAppBar(props:Props) {
@@ -78,7 +78,7 @@ function IconSearchAppBar(props:Props) {
                     input: classes.inputInput,
                 }}
                 value={searchValue}
-                onChange={e=>onSearchValueChange(e.target.value)}
+                onChange={onSearchValueChange?e=>onSearchValueChange(e.target.value):undefined}
             />
         </div>
     </IconAppBar>;

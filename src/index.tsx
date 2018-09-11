@@ -4,7 +4,7 @@ import AutoComplete from "./components/Autocomplete";
 import Typography from "@material-ui/core/Typography/Typography";
 import LeftNavFramework from "./components/LeftNavFramework/LeftNavFramework";
 import Portal from "@material-ui/core/Portal/Portal";
-import IconAppBar from "./components/commonAppBars/IconAppBar";
+import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
 import BackIcon from "@material-ui/icons/ArrowBack";
 import AppBarMain from "./components/commonAppBars/AppBarMain";
 
@@ -25,7 +25,7 @@ const items = [
 ]
 
 const App = ()=><div>
-    <IconAppBar title={"default title"} icon={<BackIcon/>} onIconClick={()=>{}}/>
+    <IconSearchAppBar title={"default title"} icon={<BackIcon/>} onIconClick={()=>{}}/>
     <AppBarMain>this is content</AppBarMain>
 </div>;
 
