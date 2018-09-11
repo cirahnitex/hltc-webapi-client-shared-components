@@ -12,21 +12,23 @@ import IconButton from "@material-ui/core/IconButton/IconButton";
 import Hidden from "@material-ui/core/Hidden/Hidden";
 import Drawer from "@material-ui/core/Drawer/Drawer";
 
+type AddonToReactElement = (addonWrap: HTMLDivElement) => React.ReactElement<any>;
+
 export interface NavItem {
     caption: string | React.ReactFragment,
-    content: NavItem[] | React.ReactElement<any>,
+    content: NavItem[] | React.ReactElement<any> | AddonToReactElement,
 }
 
 export interface Props {
     title: string,
     subTitle?: string,
-    items: NavItem[],
-    appBarAddon?: React.ReactElement<any>,
+    items: NavItem[]
 }
 
 interface State {
     path: number[]
     mobileOpen: boolean
+    appBarAddonWrapEl: HTMLDivElement|null;
 }
 
 function convertToListEntry(navItem:NavItem):ListEntry {
@@ -47,13 +49,15 @@ function convertToListEntry(navItem:NavItem):ListEntry {
 
 const drawerWidth = 240;
 const breakpointCss = "@media (min-width: 960px)";
+const mediumCss = "@media (min-width: 600px)";
 const classes = {
     root: style({flexGrow: 1,
         zIndex: 1,
         overflow: 'hidden',
         position: 'relative',
         display: 'flex',
-        width: '100%',}),
+        width: '100%',
+    }),
     appBar: style({
         position: 'absolute',
         marginLeft: drawerWidth,
@@ -76,6 +80,7 @@ const classes = {
     }),
     drawerPaper: style({
         width: drawerWidth,
+        minHeight: '100vh',
         $nest: {
             [breakpointCss]: {
                 position: 'relative !important' as any,
@@ -90,12 +95,15 @@ const classes = {
         justifyContent: "center"
     }),
     title: style({
-        paddingLeft: 16,
+        padding: '0 16px',
     }),
     content: style({
         flexGrow: 1,
-        padding: "80px 40px 16px 40px",
+        padding: "72px 32px 16px 32px",
         $nest: {
+            [mediumCss]: {
+                padding: "80px 40px 16px 40px",
+            },
             [breakpointCss]: {
                 marginLeft: `${drawerWidth}px`,
             },
@@ -118,7 +126,8 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
 
         this.state = {
             path,
-            mobileOpen: false
+            mobileOpen: false,
+            appBarAddonWrapEl: null
         }
     }
     handlePathChange = (path:number[]) => this.setState({path});
@@ -141,7 +150,16 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
     handleDrawerToggle = () => {
         this.setState({ mobileOpen: !this.state.mobileOpen });
     };
-
+    handleAppBarAddonEl = (node:HTMLDivElement|null)=>node && this.setState({appBarAddonWrapEl:node});
+    renderMain(content:React.ReactElement<any> | AddonToReactElement) {
+        if(typeof(content) === 'function') {
+            const addonEl = this.state.appBarAddonWrapEl;
+            return addonEl?content(addonEl):null;
+        }
+        else {
+            return content;
+        }
+    }
     render() {
         const drawer = <div>
             <div className={classes.drawerTitleWrap}>
@@ -155,8 +173,10 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
 
         const navItem = this.getPathItem(this.state.path, this.props.items);
 
+        const appBarAddon = <div className={classes.appBarAddonsWrap} ref={this.handleAppBarAddonEl} />;
+
         return <div className={classes.root}>
-            <AppBar className={classes.appBar}>
+            <AppBar className={classes.appBar} style={{zIndex:0}}>
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -167,7 +187,7 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
                         <MenuIcon />
                     </IconButton>
                     <Title className={classes.title}>{navItem?navItem.caption:""}</Title>
-                    {this.props.appBarAddon}
+                    {appBarAddon}
                 </Toolbar>
             </AppBar>
             <Hidden mdUp>
@@ -199,7 +219,7 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
                 </Drawer>
             </Hidden>
             <main className={classes.content}>
-                {navItem?navItem.content:""}
+                {navItem && !(navItem.content instanceof Array) && this.renderMain(navItem.content)}
             </main>
         </div>
     }
