@@ -42,13 +42,15 @@ function convertToListEntry(navItem) {
 }
 var drawerWidth = 240;
 var breakpointCss = "@media (min-width: 960px)";
+var mediumCss = "@media (min-width: 600px)";
 var classes = {
     root: style({ flexGrow: 1,
         zIndex: 1,
         overflow: 'hidden',
         position: 'relative',
         display: 'flex',
-        width: '100%', }),
+        width: '100%',
+    }),
     appBar: style({
         position: 'absolute',
         marginLeft: drawerWidth,
@@ -58,8 +60,9 @@ var classes = {
             },
             _a)
     }),
-    appBarSpaceFiller: style({
-        flexGrow: 1
+    appBarAddonsWrap: style({
+        flexGrow: 1,
+        display: "flex"
     }),
     navIconHide: style({
         $nest: (_b = {},
@@ -70,6 +73,7 @@ var classes = {
     }),
     drawerPaper: style({
         width: drawerWidth,
+        minHeight: '100vh',
         $nest: (_c = {},
             _c[breakpointCss] = {
                 position: 'relative !important',
@@ -84,12 +88,15 @@ var classes = {
         justifyContent: "center"
     }),
     title: style({
-        paddingLeft: 16,
+        padding: '0 16px',
     }),
     content: style({
         flexGrow: 1,
-        padding: "80px 40px 16px 40px",
+        padding: "72px 32px 16px 32px",
         $nest: (_d = {},
+            _d[mediumCss] = {
+                padding: "80px 40px 16px 40px",
+            },
             _d[breakpointCss] = {
                 marginLeft: drawerWidth + "px",
             },
@@ -104,6 +111,7 @@ var LeftNavFramework = /** @class */ (function (_super) {
         _this.handleDrawerToggle = function () {
             _this.setState({ mobileOpen: !_this.state.mobileOpen });
         };
+        _this.handleAppBarAddonEl = function (node) { return node && _this.setState({ appBarAddonWrapEl: node }); };
         // find the first nav item as default
         if (props.items.length <= 0)
             throw new Error("nav item cannot be empty");
@@ -115,7 +123,8 @@ var LeftNavFramework = /** @class */ (function (_super) {
         }
         _this.state = {
             path: path,
-            mobileOpen: false
+            mobileOpen: false,
+            appBarAddonWrapEl: null
         };
         return _this;
     }
@@ -137,10 +146,14 @@ var LeftNavFramework = /** @class */ (function (_super) {
         }
         return navItem;
     };
-    LeftNavFramework.prototype.renderAppbarAddons = function () {
-        if (this.props.appBarAddons == null)
-            return null;
-        return this.props.appBarAddons.map(function (Addon, i) { return React.createElement("div", { key: i }, Addon); });
+    LeftNavFramework.prototype.renderMain = function (content) {
+        if (typeof (content) === 'function') {
+            var addonEl = this.state.appBarAddonWrapEl;
+            return addonEl ? content(addonEl) : null;
+        }
+        else {
+            return content;
+        }
     };
     LeftNavFramework.prototype.render = function () {
         var drawer = React.createElement("div", null,
@@ -150,14 +163,14 @@ var LeftNavFramework = /** @class */ (function (_super) {
             React.createElement(Divider, null),
             React.createElement(NestedList, { items: this.props.items.map(function (x) { return convertToListEntry(x); }), path: this.state.path, onRequestPathChange: this.handlePathChange }));
         var navItem = this.getPathItem(this.state.path, this.props.items);
+        var appBarAddon = React.createElement("div", { className: classes.appBarAddonsWrap, ref: this.handleAppBarAddonEl });
         return React.createElement("div", { className: classes.root },
-            React.createElement(AppBar, { className: classes.appBar },
+            React.createElement(AppBar, { className: classes.appBar, style: { zIndex: 0 } },
                 React.createElement(Toolbar, null,
                     React.createElement(IconButton, { color: "inherit", "aria-label": "open drawer", onClick: this.handleDrawerToggle, className: classes.navIconHide },
                         React.createElement(MenuIcon, null)),
                     React.createElement(Title, { className: classes.title }, navItem ? navItem.caption : ""),
-                    React.createElement("div", { className: classes.appBarSpaceFiller }),
-                    this.renderAppbarAddons())),
+                    appBarAddon)),
             React.createElement(Hidden, { mdUp: true },
                 React.createElement(Drawer, { variant: "temporary", anchor: 'left', open: this.state.mobileOpen, onClose: this.handleDrawerToggle, classes: {
                         paper: classes.drawerPaper,
@@ -168,7 +181,7 @@ var LeftNavFramework = /** @class */ (function (_super) {
                 React.createElement(Drawer, { variant: "permanent", open: true, classes: {
                         paper: classes.drawerPaper,
                     }, style: { position: "fixed" } }, drawer)),
-            React.createElement("main", { className: classes.content }, navItem ? navItem.content : ""));
+            React.createElement("main", { className: classes.content }, navItem && !(navItem.content instanceof Array) && this.renderMain(navItem.content)));
     };
     return LeftNavFramework;
 }(React.PureComponent));
