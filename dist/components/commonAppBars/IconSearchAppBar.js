@@ -62,7 +62,7 @@ var styles = function (theme) {
                 paddingTop: theme.spacing.unit,
                 paddingRight: theme.spacing.unit,
                 paddingBottom: theme.spacing.unit,
-                paddingLeft: theme.spacing.unit * 10,
+                paddingLeft: theme.spacing.unit * 7,
                 transition: theme.transitions.create('width'),
                 width: '100%'
             },
