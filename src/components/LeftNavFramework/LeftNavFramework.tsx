@@ -14,14 +14,14 @@ import Drawer from "@material-ui/core/Drawer/Drawer";
 
 export interface NavItem {
     caption: string | React.ReactFragment,
-    content: NavItem[] | React.ReactChild,
+    content: NavItem[] | React.ReactElement<any>,
 }
 
 export interface Props {
     title: string,
     subTitle?: string,
     items: NavItem[],
-    appBarAddons?: React.ReactChild[],
+    appBarAddon?: React.ReactElement<any>,
 }
 
 interface State {
@@ -63,8 +63,9 @@ const classes = {
             }
         }
     }),
-    appBarSpaceFiller: style({
-        flexGrow: 1
+    appBarAddonsWrap: style({
+        flexGrow: 1,
+        display: "flex"
     }),
     navIconHide: style({
         $nest: {
@@ -141,10 +142,6 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
         this.setState({ mobileOpen: !this.state.mobileOpen });
     };
 
-    renderAppbarAddons() {
-        if(this.props.appBarAddons == null) return null;
-        return this.props.appBarAddons.map((Addon, i)=><div key={i}>{Addon}</div>)
-    }
     render() {
         const drawer = <div>
             <div className={classes.drawerTitleWrap}>
@@ -157,6 +154,7 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
         </div>;
 
         const navItem = this.getPathItem(this.state.path, this.props.items);
+
         return <div className={classes.root}>
             <AppBar className={classes.appBar}>
                 <Toolbar>
@@ -169,8 +167,7 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
                         <MenuIcon />
                     </IconButton>
                     <Title className={classes.title}>{navItem?navItem.caption:""}</Title>
-                    <div className={classes.appBarSpaceFiller} />
-                    {this.renderAppbarAddons()}
+                    {this.props.appBarAddon}
                 </Toolbar>
             </AppBar>
             <Hidden mdUp>
