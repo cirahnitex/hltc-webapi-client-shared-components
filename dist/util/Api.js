@@ -27,7 +27,7 @@ var Api = /** @class */ (function () {
         window.history.replaceState(null, "", '?' + Api.encodeQueryString(data));
     };
     Api.resolve = function (path) {
-        if (path.indexOf('/') === 0 && window.location.host === 'localhost:8080')
+        if (path.indexOf('/') === 0 && window.location.host.startsWith('localhost'))
             return "http://hltc.cs.ust.hk/webapi" + path;
         return '/webapi' + path;
     };

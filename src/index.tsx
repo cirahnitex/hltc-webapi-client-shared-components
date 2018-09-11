@@ -1,8 +1,5 @@
 import * as React from "react"
 import * as ReactDom from "react-dom"
-import AutoComplete from "./components/Autocomplete";
-import Typography from "@material-ui/core/Typography/Typography";
-import LeftNavFramework from "./components/LeftNavFramework/LeftNavFramework";
 import Portal from "@material-ui/core/Portal/Portal";
 import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
 import BackIcon from "@material-ui/icons/ArrowBack";
@@ -22,7 +19,7 @@ const items = [
         caption: "page#0",
         content: (addonWrap:HTMLDivElement)=><Page0 addonWrap={addonWrap} />
     }
-]
+];
 
 const App = ()=><div>
     <IconSearchAppBar title={"default title"} icon={<BackIcon/>} onIconClick={()=>{}}/>
