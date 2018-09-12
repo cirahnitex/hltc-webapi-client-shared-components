@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './react-text-mask';
 interface Props {
     label?: string;
     value?: string;

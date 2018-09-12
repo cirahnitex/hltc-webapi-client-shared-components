@@ -23,7 +23,6 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import * as React from 'react';
-import './react-text-mask';
 import TextMask from 'react-text-mask';
 import emailMask from 'text-mask-addons/dist/emailMask';
 import FormControl from "@material-ui/core/FormControl/FormControl";
