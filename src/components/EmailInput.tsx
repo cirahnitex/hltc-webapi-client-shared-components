@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './react-text-mask';
 import TextMask from 'react-text-mask';
 import emailMask from 'text-mask-addons/dist/emailMask';
 import FormControl from "@material-ui/core/FormControl/FormControl";
