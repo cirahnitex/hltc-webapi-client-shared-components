@@ -1,4 +1,4 @@
 export default function singletonLocalStorage<T>(qualifiedName: string): {
-    setItem: (item: T) => Promise<T>;
-    getItem: () => Promise<T | null>;
+    set: (item: T) => Promise<T>;
+    get: () => Promise<T | null>;
 };

@@ -1,7 +1,7 @@
 import * as localforage from "localforage";
 export default function singletonLocalStorage(qualifiedName) {
-    var setItem = function (item) { return localforage.setItem(qualifiedName, item); };
-    var getItem = function () { return localforage.getItem(qualifiedName); };
-    return { setItem: setItem, getItem: getItem };
+    var set = function (item) { return localforage.setItem(qualifiedName, item); };
+    var get = function () { return localforage.getItem(qualifiedName); };
+    return { set: set, get: get };
 }
 //# sourceMappingURL=singletonLocalStorage.js.map
