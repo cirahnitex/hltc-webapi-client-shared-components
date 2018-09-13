@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
-import createEnhancedTable from "./components/EnhancedTable";
-var EnhancedTable = createEnhancedTable(function (item) { return item.a; }, { field: "a", label: "Item_ID" }, { field: "b", label: "value", numeric: true, editable: true });
+import createEnhancedTable from "./components/EnhancedTable/EnhancedTable";
+import IntegerEditor from "./components/EnhancedTable/IntegerEditor";
+var EnhancedTable = createEnhancedTable(function (item) { return item.a; }, { field: "a", label: "Item_ID" }, { field: "b", label: "value", numeric: true, editComponent: IntegerEditor });
 var items = [
     { a: 1, b: 2 },
     { a: 2, b: 3 }

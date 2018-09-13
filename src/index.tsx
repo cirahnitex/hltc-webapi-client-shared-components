@@ -1,15 +1,16 @@
 import * as React from "react"
 import * as ReactDom from "react-dom"
-import createEnhancedTable from "./components/EnhancedTable";
+import createEnhancedTable from "./components/EnhancedTable/EnhancedTable";
+import IntegerEditor from "./components/EnhancedTable/IntegerEditor";
 
 interface Item {
     a: number;
     b: number;
 }
 
-const EnhancedTable = createEnhancedTable<Item>((item:Item)=>item.a,
+const EnhancedTable = createEnhancedTable((item:Item)=>item.a,
     {field: "a", label: "Item_ID"},
-    {field: "b", label: "value", numeric: true, editable: true}
+    {field: "b", label: "value", numeric: true, editComponent: IntegerEditor}
     );
 
 const items:Item[] = [

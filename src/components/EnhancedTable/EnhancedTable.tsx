@@ -17,26 +17,26 @@ import Paper from "@material-ui/core/Paper/Paper";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import Popover, {PopoverOrigin} from "@material-ui/core/Popover/Popover";
-import Input from "@material-ui/core/Input/Input";
+import TextDisplay from "./TextDisplay";
 
 const Tooltip = require("@material-ui/core/umd/material-ui.development").Tooltip;
 
 const TableRow = require("@material-ui/core/umd/material-ui.development").TableRow;
 
 
-type FieldConfig<ItemType> = {
-    field: keyof ItemType & string,
+type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
+    field: Field,
     numeric?: boolean,
     disablePadding?: boolean,
     label?: string,
-    noSorting?: boolean,
+    disableSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
-    editable?: boolean
+    displayComponent?: React.ComponentType<{value: ItemType[Field]}>,
+    editComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange:(value: ItemType[Field])=>any}>
 };
 
 
-
-function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemType>[]) {
+function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemType, any>[]) {
     type Key = keyof ItemType;
     interface Props {
         numSelected: number | null,
@@ -71,8 +71,8 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemT
                                     padding={column.disablePadding ? 'none' : 'default'}
                                     sortDirection={orderBy === column.field ? order : false}
                                 >
-                                    {column.noSorting && column.label}
-                                    {!column.noSorting && <Tooltip
+                                    {column.disableSorting && column.label}
+                                    {!column.disableSorting && <Tooltip
                                         title="Sort"
                                         placement={column.numeric ? 'bottom-end' : 'bottom-start'}
                                         enterDelay={300}
@@ -165,11 +165,215 @@ interface EnhancedTableProps<ItemType, IDType> {
     onItemEdit?: (id:IDType, field:string, value:string)=>any,
 }
 
-export default function createEnhancedTableComponent<ItemType>(getID:(item:ItemType)=>number, ...columns:FieldConfig<ItemType>[]):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+ column0:FieldConfig<ItemType, F0>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
 
-export default function createEnhancedTableComponent<ItemType>(getID:(item:ItemType)=>string, ...columns:FieldConfig<ItemType>[]):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+    column0:FieldConfig<ItemType, F0>,
+    column1:FieldConfig<ItemType, F1>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
 
-export default function createEnhancedTableComponent<ItemType, IDType extends number|string>(getID:(item:ItemType)=>IDType, ...columns:FieldConfig<ItemType>[]):React.ComponentType<EnhancedTableProps<ItemType, IDType>> {
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string,
+    F5 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>,
+      column5:FieldConfig<ItemType, F5>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string,
+    F5 extends keyof ItemType & string,
+    F6 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>,
+      column5:FieldConfig<ItemType, F5>,
+      column6:FieldConfig<ItemType, F6>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string,
+    F5 extends keyof ItemType & string,
+    F6 extends keyof ItemType & string,
+    F7 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>number,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>,
+      column5:FieldConfig<ItemType, F5>,
+      column6:FieldConfig<ItemType, F6>,
+      column7:FieldConfig<ItemType, F7>
+):React.ComponentType<EnhancedTableProps<ItemType, number>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string,
+    F5 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>,
+      column5:FieldConfig<ItemType, F5>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string,
+    F5 extends keyof ItemType & string,
+    F6 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>,
+      column5:FieldConfig<ItemType, F5>,
+      column6:FieldConfig<ItemType, F6>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType,
+    F0 extends keyof ItemType & string,
+    F1 extends keyof ItemType & string,
+    F2 extends keyof ItemType & string,
+    F3 extends keyof ItemType & string,
+    F4 extends keyof ItemType & string,
+    F5 extends keyof ItemType & string,
+    F6 extends keyof ItemType & string,
+    F7 extends keyof ItemType & string
+    >(getID:(item:ItemType)=>string,
+      column0:FieldConfig<ItemType, F0>,
+      column1:FieldConfig<ItemType, F1>,
+      column2:FieldConfig<ItemType, F2>,
+      column3:FieldConfig<ItemType, F3>,
+      column4:FieldConfig<ItemType, F4>,
+      column5:FieldConfig<ItemType, F5>,
+      column6:FieldConfig<ItemType, F6>,
+      column7:FieldConfig<ItemType, F7>
+):React.ComponentType<EnhancedTableProps<ItemType, string>>;
+
+export default function createEnhancedTableComponent<ItemType, IDType extends number|string>(getID:(item:ItemType)=>IDType, ...columns:FieldConfig<ItemType, any>[]):React.ComponentType<EnhancedTableProps<ItemType, IDType>> {
     type Key = keyof ItemType;
     const EnhancedTableToolbar = createEnhancedToolbar<ItemType>();
     const EnhancedTableHead = createEnhancedTableHeadComponent<ItemType>(columns);
@@ -202,9 +406,8 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
         rowsPerPage: number,
         editingAnchorEl: HTMLElement|null;
         editingId: IDType|null,
-        editingColumn: string|null,
-        editingValue: string|null,
-        editingOriValue: string|null,
+        editingColumn: number|null,
+        editingOriValue: any|null,
     }
     const EnhancedTable = class extends React.PureComponent<Props, State> {
         constructor(props:Props) {
@@ -217,7 +420,6 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                 editingAnchorEl: null,
                 editingId:null,
                 editingColumn:null,
-                editingValue:null,
                 editingOriValue: null,
             }
         }
@@ -284,38 +486,43 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
         handleChangeRowsPerPage = (e:React.ChangeEvent<HTMLInputElement>)=>{
             this.setState({rowsPerPage:parseInt(e.target.value)})
         };
-        handleCellClick = (el:HTMLElement, id:IDType, column:string, value:string)=>{
-            this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingValue:value, editingOriValue:value})
-        };
-        handleEditingValueChange = (e:React.ChangeEvent<HTMLInputElement>)=>this.setState({editingValue:e.target.value});
-        handleEditingKeyDown = (e:React.KeyboardEvent<HTMLInputElement>)=>{
-            if(e.which===13) {
-                this.handleCloseEditing();
-            }
+        handleCellClick = (el:HTMLElement, id:IDType, column:number, value:any)=>{
+            this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingOriValue:value})
         };
         handleCloseEditing = ()=>{
-            const {editingId, editingColumn, editingValue, editingOriValue} = this.state;
-            if(editingOriValue !== editingValue && this.props.onItemEdit) {
-                this.props.onItemEdit(editingId!, editingColumn!, editingValue!);
-            }
-            this.setState({editingAnchorEl:null, editingId: null, editingColumn:null, editingValue:null, editingOriValue:null});
+            this.setState({editingAnchorEl:null});
+        };
+        handleSubmitEditing = (newValue: any)=>{
+            const {editingId, editingColumn} = this.state;
+            this.props.onItemEdit && this.props.onItemEdit(editingId!, columns[editingColumn!].field, newValue!);
+            this.handleCloseEditing();
         };
         isSelected = (id:(IDType)) => this.props.selection && this.props.selection.indexOf(id) !== -1;
         getEditingPopoverOrigin():PopoverOrigin {
             const {editingColumn} = this.state;
             if(editingColumn) {
-                for(const column of columns) {
-                    if(column.field === editingColumn) {
-                        if (column.numeric) return {horizontal: "right", vertical: "top"};
-                        break;
-                    }
-                }
+                if(columns[editingColumn].numeric) return {horizontal: "right", vertical: "top"};
             }
             return {horizontal: "left", vertical: "top"}
         }
+        renderEditingPopover() {
+            const {classes} = this.props;
+            const {editingAnchorEl, editingColumn, editingOriValue} = this.state;
+            const EditComponent = editingColumn && columns[editingColumn].editComponent || null;
+            return <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing} anchorOrigin={this.getEditingPopoverOrigin()}>
+                <div className={classes.editingWrap}>
+                    {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing}/>}
+                </div>
+            </Popover>
+        }
+        renderCellDisplay(item:ItemType, columnIndex: number) {
+            const column =  columns[columnIndex];
+            const Display = column.displayComponent || TextDisplay;
+            return <Display value={item[column.field]} />
+        }
         render() {
             const {classes, title, selection, actions} = this.props;
-            const {order, orderBy, page, rowsPerPage, editingAnchorEl, editingValue} = this.state;
+            const {order, orderBy, page, rowsPerPage} = this.state;
             const data = this.getSortedData();
             const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
             const showPagination = data.length > rowsPerPage;
@@ -334,7 +541,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                                 rowCount={data.length}
                             />
                             <TableBody>
-                                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n,i) => {
+                                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
                                     const isSelected = this.isSelected(getID(n));
                                     return (
                                         <TableRow
@@ -348,13 +555,13 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                                             {numSelected != null && <TableCell padding="checkbox">
                                                 <Checkbox checked={isSelected} onChange={e=>this.handleRowCheckChange(getID(n))}/>
                                             </TableCell>}
-                                            {columns.map(column=><TableCell
+                                            {columns.map((column, columnIndex)=><TableCell
                                                 key={column.field}
                                                 padding={column.disablePadding?"none":undefined}
                                                 numeric={column.numeric}
-                                                onClick={column.editable?(e)=>this.handleCellClick(e.currentTarget,getID(n),column.field, n[column.field].toString()):undefined}
-                                                style={column.editable?{cursor:"pointer"}:undefined}
-                                            >{n[column.field] as any}</TableCell>)}
+                                                onClick={column.editComponent?(e)=>this.handleCellClick(e.currentTarget,getID(n), columnIndex, n[column.field]):undefined}
+                                                style={column.editComponent?{cursor:"pointer"}:undefined}
+                                            >{this.renderCellDisplay(n, columnIndex)}</TableCell>)}
                                         </TableRow>
                                     );
                                 })}
@@ -382,11 +589,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                         onChangeRowsPerPage={this.handleChangeRowsPerPage}
                     />}
                     {!showPagination && <div style={{height:8}} />}
-                    <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing} anchorOrigin={this.getEditingPopoverOrigin()}>
-                        <div className={classes.editingWrap}>
-                            <Input value={editingValue || ""} onChange={this.handleEditingValueChange} className={classes.editingInput} onKeyDown={this.handleEditingKeyDown}/>
-                        </div>
-                    </Popover>
+                    {this.renderEditingPopover()}
                 </Paper>
             );
         }
