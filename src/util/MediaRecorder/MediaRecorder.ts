@@ -5,7 +5,10 @@ function createWorker (workerSource:string):Worker {
     return new Worker(URL.createObjectURL(blob))
 }
 
-
+interface BlobEvent extends Event {
+    data: Blob;
+    timeCode: number;
+}
 
 interface MediaStreamRecorderEvent extends Event {
     error: DOMException;

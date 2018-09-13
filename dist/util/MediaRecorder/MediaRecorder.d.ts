@@ -1,3 +1,7 @@
+interface BlobEvent extends Event {
+    data: Blob;
+    timeCode: number;
+}
 interface MediaStreamRecorderEvent extends Event {
     error: DOMException;
 }
