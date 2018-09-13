@@ -26,7 +26,7 @@ import Paper from "@material-ui/core/Paper/Paper";
 import TableBody from "@material-ui/core/TableBody/TableBody";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import Popover from "@material-ui/core/Popover/Popover";
-import Input from "@material-ui/core/Input/Input";
+import TextDisplay from "./TextDisplay";
 var Tooltip = require("@material-ui/core/umd/material-ui.development").Tooltip;
 var TableRow = require("@material-ui/core/umd/material-ui.development").TableRow;
 function createEnhancedTableHeadComponent(columnData) {
@@ -48,8 +48,8 @@ function createEnhancedTableHeadComponent(columnData) {
                         React.createElement(Checkbox, { indeterminate: numSelected > 0 && numSelected < rowCount, checked: numSelected === rowCount, onChange: onSelectAllClick })),
                     columnData.map(function (column) {
                         return (React.createElement(TableCell, { key: column.field, numeric: column.numeric, padding: column.disablePadding ? 'none' : 'default', sortDirection: orderBy === column.field ? order : false },
-                            column.noSorting && column.label,
-                            !column.noSorting && React.createElement(Tooltip, { title: "Sort", placement: column.numeric ? 'bottom-end' : 'bottom-start', enterDelay: 300 },
+                            column.disableSorting && column.label,
+                            !column.disableSorting && React.createElement(Tooltip, { title: "Sort", placement: column.numeric ? 'bottom-end' : 'bottom-start', enterDelay: 300 },
                                 React.createElement(TableSortLabel, { active: orderBy === column.field, direction: order, onClick: _this.createSortHandler(column.field) }, column.label || column.field))));
                     }, this))));
         };
@@ -168,20 +168,15 @@ export default function createEnhancedTableComponent(getID) {
                 _this.setState({ rowsPerPage: parseInt(e.target.value) });
             };
             _this.handleCellClick = function (el, id, column, value) {
-                _this.setState({ editingAnchorEl: el, editingId: id, editingColumn: column, editingValue: value, editingOriValue: value });
-            };
-            _this.handleEditingValueChange = function (e) { return _this.setState({ editingValue: e.target.value }); };
-            _this.handleEditingKeyDown = function (e) {
-                if (e.which === 13) {
-                    _this.handleCloseEditing();
-                }
+                _this.setState({ editingAnchorEl: el, editingId: id, editingColumn: column, editingOriValue: value });
             };
             _this.handleCloseEditing = function () {
-                var _a = _this.state, editingId = _a.editingId, editingColumn = _a.editingColumn, editingValue = _a.editingValue, editingOriValue = _a.editingOriValue;
-                if (editingOriValue !== editingValue && _this.props.onItemEdit) {
-                    _this.props.onItemEdit(editingId, editingColumn, editingValue);
-                }
-                _this.setState({ editingAnchorEl: null, editingId: null, editingColumn: null, editingValue: null, editingOriValue: null });
+                _this.setState({ editingAnchorEl: null });
+            };
+            _this.handleSubmitEditing = function (newValue) {
+                var _a = _this.state, editingId = _a.editingId, editingColumn = _a.editingColumn;
+                _this.props.onItemEdit && _this.props.onItemEdit(editingId, columns[editingColumn].field, newValue);
+                _this.handleCloseEditing();
             };
             _this.isSelected = function (id) { return _this.props.selection && _this.props.selection.indexOf(id) !== -1; };
             _this.state = {
@@ -192,7 +187,6 @@ export default function createEnhancedTableComponent(getID) {
                 editingAnchorEl: null,
                 editingId: null,
                 editingColumn: null,
-                editingValue: null,
                 editingOriValue: null,
             };
             return _this;
@@ -219,21 +213,27 @@ export default function createEnhancedTableComponent(getID) {
         class_2.prototype.getEditingPopoverOrigin = function () {
             var editingColumn = this.state.editingColumn;
             if (editingColumn) {
-                for (var _i = 0, columns_2 = columns; _i < columns_2.length; _i++) {
-                    var column = columns_2[_i];
-                    if (column.field === editingColumn) {
-                        if (column.numeric)
-                            return { horizontal: "right", vertical: "top" };
-                        break;
-                    }
-                }
+                if (columns[editingColumn].numeric)
+                    return { horizontal: "right", vertical: "top" };
             }
             return { horizontal: "left", vertical: "top" };
+        };
+        class_2.prototype.renderEditingPopover = function () {
+            var classes = this.props.classes;
+            var _a = this.state, editingAnchorEl = _a.editingAnchorEl, editingColumn = _a.editingColumn, editingOriValue = _a.editingOriValue;
+            var EditComponent = editingColumn && columns[editingColumn].editComponent || null;
+            return React.createElement(Popover, { anchorEl: editingAnchorEl, open: !!editingAnchorEl, onClose: this.handleCloseEditing, anchorOrigin: this.getEditingPopoverOrigin() },
+                React.createElement("div", { className: classes.editingWrap }, EditComponent && React.createElement(EditComponent, { value: editingOriValue, onRequestValueChange: this.handleSubmitEditing })));
+        };
+        class_2.prototype.renderCellDisplay = function (item, columnIndex) {
+            var column = columns[columnIndex];
+            var Display = column.displayComponent || TextDisplay;
+            return React.createElement(Display, { value: item[column.field] });
         };
         class_2.prototype.render = function () {
             var _this = this;
             var _a = this.props, classes = _a.classes, title = _a.title, selection = _a.selection, actions = _a.actions;
-            var _b = this.state, order = _b.order, orderBy = _b.orderBy, page = _b.page, rowsPerPage = _b.rowsPerPage, editingAnchorEl = _b.editingAnchorEl, editingValue = _b.editingValue;
+            var _b = this.state, order = _b.order, orderBy = _b.orderBy, page = _b.page, rowsPerPage = _b.rowsPerPage;
             var data = this.getSortedData();
             var emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
             var showPagination = data.length > rowsPerPage;
@@ -244,12 +244,12 @@ export default function createEnhancedTableComponent(getID) {
                     React.createElement(Table, null,
                         React.createElement(EnhancedTableHead, { numSelected: numSelected, order: order, orderBy: orderBy, onSelectAllClick: this.handleSelectAllClick, onRequestSort: this.handleRequestSort, rowCount: data.length }),
                         React.createElement(TableBody, null,
-                            data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(function (n, i) {
+                            data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(function (n) {
                                 var isSelected = _this.isSelected(getID(n));
                                 return (React.createElement(TableRow, { hover: true, role: "checkbox", "aria-checked": isSelected, tabIndex: -1, key: getID(n), selected: isSelected },
                                     numSelected != null && React.createElement(TableCell, { padding: "checkbox" },
                                         React.createElement(Checkbox, { checked: isSelected, onChange: function (e) { return _this.handleRowCheckChange(getID(n)); } })),
-                                    columns.map(function (column) { return React.createElement(TableCell, { key: column.field, padding: column.disablePadding ? "none" : undefined, numeric: column.numeric, onClick: column.editable ? function (e) { return _this.handleCellClick(e.currentTarget, getID(n), column.field, n[column.field].toString()); } : undefined, style: column.editable ? { cursor: "pointer" } : undefined }, n[column.field]); })));
+                                    columns.map(function (column, columnIndex) { return React.createElement(TableCell, { key: column.field, padding: column.disablePadding ? "none" : undefined, numeric: column.numeric, onClick: column.editComponent ? function (e) { return _this.handleCellClick(e.currentTarget, getID(n), columnIndex, n[column.field]); } : undefined, style: column.editComponent ? { cursor: "pointer" } : undefined }, _this.renderCellDisplay(n, columnIndex)); })));
                             }),
                             emptyRows > 0 && showPagination && (React.createElement(TableRow, { style: { height: 49 * emptyRows } },
                                 React.createElement(TableCell, { colSpan: 6 })))))),
@@ -260,9 +260,7 @@ export default function createEnhancedTableComponent(getID) {
                         'aria-label': 'Next Page',
                     }, onChangePage: this.handleChangePage, onChangeRowsPerPage: this.handleChangeRowsPerPage }),
                 !showPagination && React.createElement("div", { style: { height: 8 } }),
-                React.createElement(Popover, { anchorEl: editingAnchorEl, open: !!editingAnchorEl, onClose: this.handleCloseEditing, anchorOrigin: this.getEditingPopoverOrigin() },
-                    React.createElement("div", { className: classes.editingWrap },
-                        React.createElement(Input, { value: editingValue || "", onChange: this.handleEditingValueChange, className: classes.editingInput, onKeyDown: this.handleEditingKeyDown })))));
+                this.renderEditingPopover()));
         };
         return class_2;
     }(React.PureComponent));

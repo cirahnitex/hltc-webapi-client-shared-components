@@ -102,6 +102,7 @@ const classes = {
         flexGrow: 1,
         padding: "72px 32px 16px 32px",
         display: 'flex',
+        flexDirection: 'column',
         $nest: {
             [mediumCss]: {
                 padding: "80px 40px 16px 40px",
