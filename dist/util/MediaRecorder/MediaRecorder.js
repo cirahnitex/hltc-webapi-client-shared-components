@@ -1,13 +1,9 @@
-import "./BlobEvent";
+import workerSource from "./wave-encoder-worker";
 if (!window.AudioContext) {
     window.AudioContext = window.webkitAudioContext;
 }
-function createWorker(fn) {
-    var js = fn
-        .toString()
-        .replace(/^function\s*\(\)\s*{/, '')
-        .replace(/}$/, '');
-    var blob = new Blob([js]);
+function createWorker(workerSource) {
+    var blob = new Blob([workerSource]);
     return new Worker(URL.createObjectURL(blob));
 }
 var MediaRecorder = /** @class */ (function () {
@@ -20,7 +16,7 @@ var MediaRecorder = /** @class */ (function () {
         this.processor = null;
         this.stream = stream;
         this.em = document.createDocumentFragment();
-        this.encoder = createWorker(MediaRecorder.encoder);
+        this.encoder = createWorker(workerSource);
         this.encoder.addEventListener('message', function (e) {
             var event = new Event('dataavailable');
             event.data = new Blob([e.data], { type: _this.mimeType });
@@ -164,7 +160,6 @@ var MediaRecorder = /** @class */ (function () {
         return /audio\/wave?/.test(mimeType);
     };
     MediaRecorder.notSupported = !navigator.mediaDevices || !AudioContext;
-    MediaRecorder.encoder = require('./wave-encoder');
     return MediaRecorder;
 }());
 export default MediaRecorder;

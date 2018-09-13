@@ -1,4 +1,3 @@
-import "./BlobEvent";
 interface MediaStreamRecorderEvent extends Event {
     error: DOMException;
 }
@@ -92,6 +91,5 @@ export default class MediaRecorder {
      */
     static isTypeSupported(mimeType: string): boolean;
     static notSupported: boolean;
-    static encoder: any;
 }
 export {};

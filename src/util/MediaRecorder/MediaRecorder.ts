@@ -1,10 +1,7 @@
+import workerSource from "./wave-encoder-worker";
 if(!(window as any).AudioContext) {(window as any).AudioContext = (window as any).webkitAudioContext}
-function createWorker (fn:()=>any):Worker {
-    const js = fn
-        .toString()
-        .replace(/^function\s*\(\)\s*{/, '')
-        .replace(/}$/, '');
-    const blob = new Blob([js]);
+function createWorker (workerSource:string):Worker {
+    const blob = new Blob([workerSource]);
     return new Worker(URL.createObjectURL(blob))
 }
 
@@ -36,7 +33,7 @@ export default class MediaRecorder{
     constructor(stream:MediaStream) {
         this.stream = stream;
         this.em = document.createDocumentFragment();
-        this.encoder = createWorker(MediaRecorder.encoder);
+        this.encoder = createWorker(workerSource);
         this.encoder.addEventListener('message', (e)=> {
             const event = new Event('dataavailable');
             (event as any).data = new Blob([e.data], { type: this.mimeType });
@@ -188,6 +185,5 @@ export default class MediaRecorder{
 
     static notSupported = !navigator.mediaDevices || !AudioContext;
 
-    static encoder = require('./wave-encoder');
 }
 
