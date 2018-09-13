@@ -45,7 +45,6 @@ var breakpointCss = "@media (min-width: 960px)";
 var mediumCss = "@media (min-width: 600px)";
 var classes = {
     root: style({ flexGrow: 1,
-        zIndex: 1,
         overflow: 'hidden',
         position: 'relative',
         display: 'flex',
