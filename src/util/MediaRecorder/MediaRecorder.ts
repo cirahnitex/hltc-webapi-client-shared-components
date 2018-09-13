@@ -1,4 +1,3 @@
-import "./BlobEvent";
 if(!(window as any).AudioContext) {(window as any).AudioContext = (window as any).webkitAudioContext}
 function createWorker (fn:()=>any):Worker {
     const js = fn
