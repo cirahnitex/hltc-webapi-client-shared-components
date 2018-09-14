@@ -1,11 +1,22 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
 import Zoom from "@material-ui/core/Zoom/Zoom";
-
+import Button, {ButtonProps} from "@material-ui/core/Button/Button";
 
 interface State {
-    fabEl: React.ReactNode;
-    existingFabEl: React.ReactNode;
+    fabEl: ButtonProps | null;
+    existingFabEl: ButtonProps | null;
+}
+
+function shallowEqual(x:ButtonProps|null, y:ButtonProps|null) {
+    if(x===y) return true;
+    if(!x || !y) return false;
+    const keys = Object.keys(x);
+    if(keys.length !== Object.keys(y).length) return false;
+    for(const key of keys) {
+        if(x[key] !== y[key]) return false;
+    }
+    return true;
 }
 
 class FabWrap extends React.PureComponent<{}, State> {
@@ -27,16 +38,18 @@ class FabWrap extends React.PureComponent<{}, State> {
         if(!existingFabEl) {
             return <div />
         }
-        return <Zoom in={existingFabEl === fabEl} onExited={this.handleZoomExit}>
-            {existingFabEl}
+        return <Zoom in={shallowEqual(fabEl, existingFabEl)} onExited={this.handleZoomExit}>
+            <Button variant={"fab"} {...existingFabEl} />
         </Zoom>
     }
 }
 
-function setGlobalFab(fabEl: React.ReactNode) {
+function setGlobalFab(fabEl: ButtonProps | null) {
     if(FabWrap.instance) {
         if(FabWrap.instance.state.existingFabEl) {
-            FabWrap.instance.setState({fabEl});
+            if(!shallowEqual(fabEl, FabWrap.instance.state.existingFabEl)) {
+                FabWrap.instance.setState({fabEl});
+            }
         }
         else {
             FabWrap.instance.setState({fabEl, existingFabEl:fabEl});
@@ -52,16 +65,14 @@ root.style.zIndex = '1000';
 document.body.appendChild(root);
 ReactDom.render(<FabWrap />, root);
 
-interface Props {
-    children: React.ReactElement<any>;
-}
+type Props = ButtonProps;
 
 export default class GlobalFab extends React.PureComponent<Props, {}> {
     componentWillUnmount() {
         setGlobalFab(null);
     }
     render() {
-        setGlobalFab(this.props.children);
+        setTimeout(()=>setGlobalFab(this.props),0);
         return <div />
     }
 }

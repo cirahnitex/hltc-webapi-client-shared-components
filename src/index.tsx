@@ -8,8 +8,8 @@ import GlobalFab from "./components/GlobalFab";
 
 
 const fabs = [
-    <Button variant={"fab"} color={"primary"}><AddIcon/></Button>,
-    <Button variant={"fab"} color={"secondary"}><AddIcon/></Button>
+    <GlobalFab variant={"fab"} color={"primary"}><AddIcon/></GlobalFab>,
+    <GlobalFab variant={"fab"} color={"secondary"}><AddIcon/></GlobalFab>
 ];
 
 interface State {
@@ -26,9 +26,7 @@ class App extends React.PureComponent<{}, State> {
     };
     render() {
         return <div>
-            <GlobalFab>
-                {fabs[this.state.index]}
-            </GlobalFab>
+            {fabs[this.state.index]}
             <Button variant={"raised"} onClick={this.handleFabChange}>change fab</Button>
         </div>
     }
