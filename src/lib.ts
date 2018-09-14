@@ -22,3 +22,4 @@ export {default as TooltipIconButton} from "./components/TooltipIconButton";
 export * from "./components/typographies";
 export {default as WhyDisableButton} from "./components/WhyDisableButton";
 export * from "./components/withDaemon";
+export * from "./components/setGlobalFab";
