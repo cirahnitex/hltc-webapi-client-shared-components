@@ -51,12 +51,7 @@ export default class Api {
             },
             body: Api.encodeQueryString(data)
         };
-        return fetch("http://127.0.0.1:8792" + path, fetchOptions)
-            .then(r => {
-                if (r.ok) return r;
-                throw new ServerError("Server respond with status code " + r.status);
-            })
-            .catch(() => fetch(Api.resolve(path), fetchOptions))
+        return fetch(Api.resolve(path), fetchOptions)
             .then(r => {
                 if (r.ok) return r.json();
                 throw new ServerError("Server respond with status code " + r.status);
