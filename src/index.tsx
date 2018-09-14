@@ -2,34 +2,44 @@ import * as React from "react"
 import * as ReactDom from "react-dom"
 import createEnhancedTable from "./components/EnhancedTable/EnhancedTable";
 import IntegerEditor from "./components/EnhancedTable/IntegerEditor";
-import Button from "@material-ui/core/Button/Button";
-import AddIcon from "@material-ui/icons/Add";
-import GlobalFab from "./components/GlobalFab";
+import TextEditor from "./components/EnhancedTable/TextEditor";
+import BasicAppBar from "./components/commonAppBars/BasicAppBar";
+import IconAppBar from "./components/commonAppBars/IconAppBar";
+import BackIcon from "@material-ui/icons/ArrowBack";
+import AppBarMain from "./components/commonAppBars/AppBarMain";
+import Paper from "@material-ui/core/Paper/Paper";
 
+interface Item {
+    a: string,
+    b: number
+}
 
-const fabs = [
-    <GlobalFab variant={"fab"} color={"primary"}><AddIcon/></GlobalFab>,
-    <GlobalFab variant={"fab"} color={"secondary"}><AddIcon/></GlobalFab>
+const items:Item[] = [
+    {a: "aha",b:1},
+    {a: "bla",b:2},
+    {a: "bla",b:3},
+    {a: "bla",b:4},
+    {a: "bla",b:5},
+    {a: "bla",b:6},
+    {a: "aha",b:7},
+    {a: "bla",b:8},
+    {a: "bla",b:9},
+    {a: "bla",b:10},
+    {a: "bla",b:11},
+    {a: "bla",b:12},
+
 ];
 
-interface State {
-    index: number
-}
-class App extends React.PureComponent<{}, State> {
-    constructor(props:{}) {
-        super(props);
-        this.state = {index:0}
-    }
-    handleFabChange = ()=> {
-        const index = (this.state.index+1)%fabs.length;
-        this.setState({index});
-    };
-    render() {
-        return <div>
-            {fabs[this.state.index]}
-            <Button variant={"raised"} onClick={this.handleFabChange}>change fab</Button>
-        </div>
-    }
-}
+const EnhancedTable = createEnhancedTable((item:Item)=>item.b,
+    {field: "a", editComponent:TextEditor},
+    {field: "b", editComponent:IntegerEditor}
+);
 
-ReactDom.render(<App />, document.getElementById('root'));
+ReactDom.render(<div>
+    <IconAppBar icon={<BackIcon />} title={"my app"}/>
+    <AppBarMain>
+        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin/>
+
+    </AppBarMain>
+
+</div>, document.getElementById('root'));

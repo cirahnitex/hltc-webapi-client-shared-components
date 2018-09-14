@@ -18,6 +18,7 @@ import TableBody from "@material-ui/core/TableBody/TableBody";
 import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import Popover, {PopoverOrigin} from "@material-ui/core/Popover/Popover";
 import TextDisplay from "./TextDisplay";
+import {style} from "typestyle";
 
 const Tooltip = require("@material-ui/core/umd/material-ui.development").Tooltip;
 
@@ -35,7 +36,6 @@ type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     editComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange:(value: ItemType[Field])=>any}>
 };
 
-
 function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemType, any>[]) {
     type Key = keyof ItemType;
     interface Props {
@@ -44,17 +44,18 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemT
         onSelectAllClick: (event:any, checked:boolean)=>void,
         order: 'asc' | 'desc',
         orderBy: Key | null,
-        rowCount: number
+        rowCount: number,
+        className?: string
     }
     return class extends React.Component<Props, {}> {
         createSortHandler = (property:Key) => (event:any) => {
             this.props.onRequestSort(property);
         };
         render() {
-            const { onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
+            const {className, onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
 
             return (
-                <TableHead>
+                <TableHead className={className}>
                     <TableRow>
                         {numSelected!=null && <TableCell padding="checkbox">
                             <Checkbox
@@ -163,6 +164,7 @@ interface EnhancedTableProps<ItemType, IDType> {
     onRequestSelectionChange?: (selection:IDType[])=>any,
     actions?: React.ReactFragment,
     onItemEdit?: (id:IDType, field:string, value:string)=>any,
+    negativeMargin?: boolean,
 }
 
 export default function createEnhancedTableComponent<ItemType,
@@ -380,10 +382,16 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
     const styles = (theme:Theme) => ({
         root: {
             width: '100%',
-            marginTop: theme.spacing.unit * 3,
+            display: 'flex',
+            flexDirection: 'column' as any,
+        },
+        negativeMargin: {
+            margin: '0 -24px',
+            width: 'calc(100% + 48px)',
         },
         tableWrapper: {
             overflowX: 'auto' as any,
+            flexShrink: 1,
         },
         emptyCaption: {
             paddingLeft: 24,
@@ -402,8 +410,6 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
     interface State {
         order: 'asc' | 'desc';
         orderBy: Key | null,
-        page: number,
-        rowsPerPage: number,
         editingAnchorEl: HTMLElement|null;
         editingId: IDType|null,
         editingColumn: number|null,
@@ -415,8 +421,6 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             this.state = {
                 order: 'asc',
                 orderBy: null,
-                page: 0,
-                rowsPerPage: 5,
                 editingAnchorEl: null,
                 editingId:null,
                 editingColumn:null,
@@ -480,12 +484,6 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
 
             if(this.props.onRequestSelectionChange) this.props.onRequestSelectionChange(newSelected);
         };
-        handleChangePage = (event:any, page:number) => {
-            this.setState({ page });
-        };
-        handleChangeRowsPerPage = (e:React.ChangeEvent<HTMLInputElement>)=>{
-            this.setState({rowsPerPage:parseInt(e.target.value)})
-        };
         handleCellClick = (el:HTMLElement, id:IDType, column:number, value:any)=>{
             this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingOriValue:value})
         };
@@ -508,7 +506,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
         renderEditingPopover() {
             const {classes} = this.props;
             const {editingAnchorEl, editingColumn, editingOriValue} = this.state;
-            const EditComponent = editingColumn && columns[editingColumn].editComponent || null;
+            const EditComponent = editingColumn != null && columns[editingColumn].editComponent || null;
             return <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing} anchorOrigin={this.getEditingPopoverOrigin()}>
                 <div className={classes.editingWrap}>
                     {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing}/>}
@@ -521,14 +519,13 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             return <Display value={item[column.field]} />
         }
         render() {
-            const {classes, title, selection, actions} = this.props;
-            const {order, orderBy, page, rowsPerPage} = this.state;
+            const {classes, title, selection, actions, negativeMargin} = this.props;
+            const {order, orderBy} = this.state;
             const data = this.getSortedData();
-            const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-            const showPagination = data.length > rowsPerPage;
             const numSelected = selection == null?null:selection.length;
+            const rootClassName = negativeMargin?[classes.root, classes.negativeMargin].join(" "):classes.root;
             return (
-                <Paper className={classes.root}>
+                <div className={rootClassName}>
                     <EnhancedTableToolbar numSelected={numSelected} title={title} actions={actions}/>
                     {data.length>0 && <div className={classes.tableWrapper}>
                         <Table>
@@ -541,7 +538,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                                 rowCount={data.length}
                             />
                             <TableBody>
-                                {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
+                                {data.map((n) => {
                                     const isSelected = this.isSelected(getID(n));
                                     return (
                                         <TableRow
@@ -565,32 +562,12 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                                         </TableRow>
                                     );
                                 })}
-                                {emptyRows > 0 && showPagination && (
-                                    <TableRow style={{height: 49 * emptyRows}}>
-                                        <TableCell colSpan={6}/>
-                                    </TableRow>
-                                )}
                             </TableBody>
                         </Table>
                     </div>}
                     {data.length == 0 && <Typography variant={"caption"} className={classes.emptyCaption}>(empty)</Typography>}
-                    {showPagination && <TablePagination
-                        component="div"
-                        count={data.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        backIconButtonProps={{
-                            'aria-label': 'Previous Page',
-                        }}
-                        nextIconButtonProps={{
-                            'aria-label': 'Next Page',
-                        }}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                    />}
-                    {!showPagination && <div style={{height:8}} />}
                     {this.renderEditingPopover()}
-                </Paper>
+                </div>
             );
         }
     };

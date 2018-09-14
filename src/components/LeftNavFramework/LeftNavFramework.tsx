@@ -178,7 +178,7 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
         const appBarAddon = <div className={classes.appBarAddonsWrap} ref={this.handleAppBarAddonEl} />;
 
         return <div className={classes.root}>
-            <AppBar className={classes.appBar} style={{zIndex:0}}>
+            <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton
                         color="inherit"
