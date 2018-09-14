@@ -4,7 +4,7 @@ import createEnhancedTable from "./components/EnhancedTable/EnhancedTable";
 import IntegerEditor from "./components/EnhancedTable/IntegerEditor";
 import Button from "@material-ui/core/Button/Button";
 import AddIcon from "@material-ui/icons/Add";
-import * as GlobalFab from "./components/setGlobalFab";
+import GlobalFab from "./components/GlobalFab";
 
 
 const fabs = [
@@ -12,16 +12,26 @@ const fabs = [
     <Button variant={"fab"} color={"secondary"}><AddIcon/></Button>
 ];
 
-let index = 0;
-
-function showNextFab() {
-    index++;
-    index = index % fabs.length;
-    GlobalFab.setGlobalFab(fabs[index])
+interface State {
+    index: number
+}
+class App extends React.PureComponent<{}, State> {
+    constructor(props:{}) {
+        super(props);
+        this.state = {index:0}
+    }
+    handleFabChange = ()=> {
+        const index = (this.state.index+1)%fabs.length;
+        this.setState({index});
+    };
+    render() {
+        return <div>
+            <GlobalFab>
+                {fabs[this.state.index]}
+            </GlobalFab>
+            <Button variant={"raised"} onClick={this.handleFabChange}>change fab</Button>
+        </div>
+    }
 }
 
-const button = document.createElement('button');
-button.onclick = showNextFab;
-button.innerHTML = "hihi";
-
-document.body.appendChild(button);
+ReactDom.render(<App />, document.getElementById('root'));
