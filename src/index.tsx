@@ -30,16 +30,27 @@ const items:Item[] = [
 
 ];
 
+function findItemById(items:Item[], id:number) {
+    for(let i=0; i<items.length; i++) {
+        const item = items[i];
+        if(item.b === id) return i;
+    }
+    return null;
+}
+
 const EnhancedTable = createEnhancedTable((item:Item)=>item.b,
     {field: "a", editComponent:TextEditor},
     {field: "b", editComponent:IntegerEditor}
 );
 
+const onItemEdit = {
+    "a":(id:Number, value:string) => {console.log(id, value)}
+};
+
 ReactDom.render(<div>
     <IconAppBar icon={<BackIcon />} title={"my app"}/>
     <AppBarMain>
-        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin/>
-
+        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit}/>
     </AppBarMain>
 
 </div>, document.getElementById('root'));

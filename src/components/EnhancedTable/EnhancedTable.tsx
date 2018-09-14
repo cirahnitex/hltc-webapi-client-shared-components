@@ -163,7 +163,7 @@ interface EnhancedTableProps<ItemType, IDType> {
     selection?: IDType[],
     onRequestSelectionChange?: (selection:IDType[])=>any,
     actions?: React.ReactFragment,
-    onItemEdit?: (id:IDType, field:string, value:any)=>any,
+    onItemEdit?: {[Field in keyof ItemType & string]?:(id:IDType, value:ItemType[Field])=>any},
     negativeMargin?: boolean,
 }
 
@@ -492,7 +492,10 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
         };
         handleSubmitEditing = (newValue: any)=>{
             const {editingId, editingColumn} = this.state;
-            this.props.onItemEdit && this.props.onItemEdit(editingId!, columns[editingColumn!].field, newValue!);
+            if(editingId != null && editingColumn != null) {
+                const editingField = columns[editingColumn].field;
+                this.props.onItemEdit && this.props.onItemEdit[editingField] && this.props.onItemEdit[editingField](editingId, newValue!);
+            }
             this.handleCloseEditing();
         };
         isSelected = (id:(IDType)) => this.props.selection && this.props.selection.indexOf(id) !== -1;
