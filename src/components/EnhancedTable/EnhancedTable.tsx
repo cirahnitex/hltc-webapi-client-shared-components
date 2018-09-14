@@ -163,7 +163,7 @@ interface EnhancedTableProps<ItemType, IDType> {
     selection?: IDType[],
     onRequestSelectionChange?: (selection:IDType[])=>any,
     actions?: React.ReactFragment,
-    onItemEdit?: (id:IDType, field:string, value:string)=>any,
+    onItemEdit?: (id:IDType, field:string, value:any)=>any,
     negativeMargin?: boolean,
 }
 
