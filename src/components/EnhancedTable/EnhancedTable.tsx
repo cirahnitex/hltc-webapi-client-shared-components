@@ -165,6 +165,7 @@ interface EnhancedTableProps<ItemType, IDType> {
     selection?: IDType[],
     onRequestSelectionChange?: (selection:IDType[])=>any,
     actions?: React.ReactFragment,
+    onBeforeItemEdit?: (id:IDType, field: keyof ItemType & string)=>any,
     onItemEdit?: {[Field in keyof ItemType & string]?:(id:IDType, value:ItemType[Field])=>any},
     negativeMargin?: boolean,
 }
@@ -487,6 +488,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             if(this.props.onRequestSelectionChange) this.props.onRequestSelectionChange(newSelected);
         };
         handleCellClick = (el:HTMLElement, id:IDType, column:number, value:any)=>{
+            this.props.onBeforeItemEdit && this.props.onBeforeItemEdit(id, columns[column].field);
             this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingOriValue:value})
         };
         handleCloseEditing = ()=>{
