@@ -19,6 +19,7 @@ import TablePagination from "@material-ui/core/TablePagination/TablePagination";
 import Popover, {PopoverOrigin} from "@material-ui/core/Popover/Popover";
 import TextDisplay from "./TextDisplay";
 import {style} from "typestyle";
+import FullscreenSlideIn from "../FullscreenSlideIn";
 
 const Tooltip = require("@material-ui/core/umd/material-ui.development").Tooltip;
 
@@ -33,7 +34,8 @@ type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     disableSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
     displayComponent?: React.ComponentType<{value: ItemType[Field]}>,
-    editComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange:(value: ItemType[Field])=>any}>
+    editComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange:(value: ItemType[Field])=>any, onRequestClose:()=>any}>;
+    editMode?: 'popover'|'fullscreen'
 };
 
 function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemType, any>[]) {
@@ -512,9 +514,23 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             const EditComponent = editingColumn != null && columns[editingColumn].editComponent || null;
             return <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing} anchorOrigin={this.getEditingPopoverOrigin()}>
                 <div className={classes.editingWrap}>
-                    {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing}/>}
+                    {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing}/>}
                 </div>
             </Popover>
+        }
+        renderEditingFullscreen() {
+            const {editingAnchorEl, editingColumn, editingOriValue} = this.state;
+            const EditComponent = editingColumn != null && columns[editingColumn].editComponent || null;
+            return <FullscreenSlideIn in={!!editingAnchorEl}>
+                {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing}/>}
+            </FullscreenSlideIn>
+        }
+        renderEditing() {
+            const {editingColumn} = this.state;
+            if(editingColumn != null && columns[editingColumn]) {
+                return columns[editingColumn].editMode === "fullscreen"?this.renderEditingFullscreen():this.renderEditingPopover()
+            }
+            return null;
         }
         renderCellDisplay(item:ItemType, columnIndex: number) {
             const column =  columns[columnIndex];
@@ -569,7 +585,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                         </Table>
                     </div>}
                     {data.length == 0 && <Typography variant={"caption"} className={classes.emptyCaption}>(empty)</Typography>}
-                    {this.renderEditingPopover()}
+                    {this.renderEditing()}
                 </div>
             );
         }

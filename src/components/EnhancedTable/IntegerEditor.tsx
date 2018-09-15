@@ -19,6 +19,7 @@ const btnWrap = style({
 interface Props {
     value: number;
     onRequestValueChange: (value:number)=>any;
+    onRequestClose: ()=>any;
 }
 interface State {
     editingValue: string;

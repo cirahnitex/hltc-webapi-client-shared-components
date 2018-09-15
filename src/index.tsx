@@ -8,6 +8,7 @@ import IconAppBar from "./components/commonAppBars/IconAppBar";
 import BackIcon from "@material-ui/icons/ArrowBack";
 import AppBarMain from "./components/commonAppBars/AppBarMain";
 import Paper from "@material-ui/core/Paper/Paper";
+import {style} from "typestyle";
 
 interface Item {
     a: string,
@@ -38,8 +39,27 @@ function findItemById(items:Item[], id:number) {
     return null;
 }
 
+interface EditorProps {
+    value:string;
+    onRequestValueChange: (value:string)=>any;
+    onRequestClose: ()=>any;
+}
+
+const rootCss = style({
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'white',
+});
+
+const FullscreenEditor = ({value, onRequestClose, onRequestValueChange}:EditorProps) => (<div className={rootCss}>
+    <BasicAppBar title={"haha"}/>
+    <AppBarMain>
+        {value}
+    </AppBarMain>
+</div>);
+
 const EnhancedTable = createEnhancedTable((item:Item)=>item.b,
-    {field: "a", editComponent:TextEditor},
+    {field: "a", editComponent:FullscreenEditor, editMode:"fullscreen"},
     {field: "b", editComponent:IntegerEditor}
 );
 

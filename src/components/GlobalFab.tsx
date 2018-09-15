@@ -61,7 +61,7 @@ const root = document.createElement('div');
 root.style.position = "fixed";
 root.style.right = '16px';
 root.style.bottom = '16px';
-root.style.zIndex = '1200'; // because material-ui appbar zIndex=1100, FAB need to be higher than that
+root.style.zIndex = '1400'; // because material-ui model zIndex=1300, FAB need to be higher than that
 document.body.appendChild(root);
 ReactDom.render(<FabWrap />, root);
 
