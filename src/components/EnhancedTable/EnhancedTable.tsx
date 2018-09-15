@@ -167,6 +167,7 @@ interface EnhancedTableProps<ItemType, IDType> {
     actions?: React.ReactFragment,
     onBeforeItemEdit?: (id:IDType, field: keyof ItemType & string)=>any,
     onItemEdit?: {[Field in keyof ItemType & string]?:(id:IDType, value:ItemType[Field])=>any},
+    onCloseItemEdit?: (id:IDType, field: keyof ItemType & string)=>any,
     negativeMargin?: boolean,
 }
 
@@ -492,7 +493,9 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingOriValue:value})
         };
         handleCloseEditing = ()=>{
+            const {editingId, editingColumn} = this.state;
             this.setState({editingAnchorEl:null});
+            this.props.onCloseItemEdit && this.props.onCloseItemEdit(editingId!, columns[editingColumn!].field);
         };
         handleSubmitEditing = (newValue: any)=>{
             const {editingId, editingColumn} = this.state;
