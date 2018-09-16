@@ -4,8 +4,8 @@ import Zoom from "@material-ui/core/Zoom/Zoom";
 import Button, {ButtonProps} from "@material-ui/core/Button/Button";
 
 interface State {
-    fabEl: ButtonProps | null;
-    existingFabEl: ButtonProps | null;
+    fab: ButtonProps | null;
+    existingFab: ButtonProps | null;
 }
 
 function shallowEqual(x:ButtonProps|null, y:ButtonProps|null) {
@@ -19,40 +19,65 @@ function shallowEqual(x:ButtonProps|null, y:ButtonProps|null) {
     return true;
 }
 
+function top(fabStack:ButtonProps[]):ButtonProps | null {
+    if(fabStack.length<=0) return null;
+    return fabStack[fabStack.length-1];
+}
+
+
 class FabWrap extends React.PureComponent<{}, State> {
     constructor(props:{}) {
         super(props);
         this.state = {
-            fabEl: null,
-            existingFabEl: null
+            fab: null,
+            existingFab: null
         };
         FabWrap.instance = this;
     }
     static instance:FabWrap|null = null;
     handleZoomExit = () => {
-        const {fabEl} = this.state;
-        this.setState({existingFabEl:fabEl});
+        const {fab} = this.state;
+        this.setState({
+            existingFab:fab
+        });
     };
     render() {
-        const {fabEl, existingFabEl} = this.state;
-        if(!existingFabEl) {
+        const {fab, existingFab} = this.state;
+        if(!existingFab) {
             return <div />
         }
-        return <Zoom in={shallowEqual(fabEl, existingFabEl)} onExited={this.handleZoomExit}>
-            <Button variant={"fab"} {...existingFabEl} />
+        return <Zoom in={shallowEqual(fab, existingFab)} onExited={this.handleZoomExit}>
+            <Button variant={"fab"} {...existingFab} />
         </Zoom>
     }
 }
 
-function setGlobalFab(fabEl: ButtonProps | null) {
-    if(FabWrap.instance) {
-        if(FabWrap.instance.state.existingFabEl) {
-            if(!shallowEqual(fabEl, FabWrap.instance.state.existingFabEl)) {
-                FabWrap.instance.setState({fabEl});
-            }
+let fabStack: ButtonProps[] = [];
+
+function setGlobalFab(fab: ButtonProps) {
+    if(!FabWrap.instance) return;
+    if(fabStack.find(x=>shallowEqual(x, fab))) return;
+    if(FabWrap.instance.state.existingFab) {
+        if(!shallowEqual(fab, FabWrap.instance.state.existingFab)) {
+            FabWrap.instance.setState({fab});
         }
-        else {
-            FabWrap.instance.setState({fabEl, existingFabEl:fabEl});
+    }
+    else {
+        FabWrap.instance.setState({fab, existingFab:fab});
+    }
+    fabStack.push(fab);
+}
+
+function removeGlobalFab(fab: ButtonProps) {
+    if(!FabWrap.instance) return;
+    if(shallowEqual(top(fabStack), fab)) {
+        fabStack.pop();
+        FabWrap.instance.setState({fab:top(fabStack)});
+    }
+    else {
+        const index = fabStack.findIndex(x=>shallowEqual(x, fab));
+        if(index>=0) {
+            fabStack.splice(index, 1);
         }
     }
 }
@@ -69,10 +94,15 @@ type Props = ButtonProps;
 
 export default class GlobalFab extends React.PureComponent<Props, {}> {
     componentWillUnmount() {
-        setGlobalFab(null);
+        removeGlobalFab(this.props);
+    }
+    componentDidMount() {
+        setGlobalFab(this.props);
+    }
+    componentDidUpdate() {
+        setGlobalFab(this.props);
     }
     render() {
-        setTimeout(()=>setGlobalFab(this.props),0);
         return <div />
     }
 }
