@@ -34,7 +34,7 @@ type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     disableSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
     displayComponent?: React.ComponentType<{value: ItemType[Field]}>,
-    editComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange:(value: ItemType[Field])=>any, onRequestClose:()=>any}>;
+    editComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange:(value: ItemType[Field])=>any, onRequestClose:()=>any, item:ItemType}>;
     editMode?: 'popover'|'fullscreen'
 };
 
@@ -417,6 +417,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
         editingAnchorEl: HTMLElement|null;
         editingId: IDType|null,
         editingColumn: number|null,
+        editingItem: ItemType|null,
         editingOriValue: any|null,
     }
     const EnhancedTable = class extends React.PureComponent<Props, State> {
@@ -429,6 +430,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                 editingId:null,
                 editingColumn:null,
                 editingOriValue: null,
+                editingItem: null,
             }
         }
         getSortedData() {
@@ -488,9 +490,9 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
 
             if(this.props.onRequestSelectionChange) this.props.onRequestSelectionChange(newSelected);
         };
-        handleCellClick = (el:HTMLElement, id:IDType, column:number, value:any)=>{
+        handleItemEdit = (el:HTMLElement, id:IDType, column:number, value:any, item:ItemType)=>{
             this.props.onBeforeItemEdit && this.props.onBeforeItemEdit(id, columns[column].field);
-            this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingOriValue:value})
+            this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingOriValue:value, editingItem:item})
         };
         handleCloseEditing = ()=>{
             const {editingId, editingColumn} = this.state;
@@ -515,19 +517,19 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
         }
         renderEditingPopover() {
             const {classes} = this.props;
-            const {editingAnchorEl, editingColumn, editingOriValue} = this.state;
+            const {editingAnchorEl, editingColumn, editingOriValue, editingId, editingItem} = this.state;
             const EditComponent = editingColumn != null && columns[editingColumn].editComponent || null;
             return <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing} anchorOrigin={this.getEditingPopoverOrigin()}>
                 <div className={classes.editingWrap}>
-                    {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing}/>}
+                    {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing} item={editingItem!}/>}
                 </div>
             </Popover>
         }
         renderEditingFullscreen() {
-            const {editingAnchorEl, editingColumn, editingOriValue} = this.state;
+            const {editingAnchorEl, editingColumn, editingOriValue,  editingItem} = this.state;
             const EditComponent = editingColumn != null && columns[editingColumn].editComponent || null;
             return <FullscreenSlideIn in={!!editingAnchorEl}>
-                {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing}/>}
+                {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing} item={editingItem!}/>}
             </FullscreenSlideIn>
         }
         renderEditing() {
@@ -580,7 +582,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                                                 key={column.field}
                                                 padding={column.disablePadding?"none":undefined}
                                                 numeric={column.numeric}
-                                                onClick={column.editComponent?(e)=>this.handleCellClick(e.currentTarget,getID(n), columnIndex, n[column.field]):undefined}
+                                                onClick={column.editComponent?(e)=>this.handleItemEdit(e.currentTarget,getID(n), columnIndex, n[column.field], n):undefined}
                                                 style={column.editComponent?{cursor:"pointer"}:undefined}
                                             >{this.renderCellDisplay(n, columnIndex)}</TableCell>)}
                                         </TableRow>

@@ -12,26 +12,26 @@ import {style} from "typestyle";
 
 interface Item {
     a: string,
-    b: number
+    b: string
 }
 
 const items:Item[] = [
-    {a: "aha",b:1},
-    {a: "bla",b:2},
-    {a: "bla",b:3},
-    {a: "bla",b:4},
-    {a: "bla",b:5},
-    {a: "bla",b:6},
-    {a: "aha",b:7},
-    {a: "bla",b:8},
-    {a: "bla",b:9},
-    {a: "bla",b:10},
-    {a: "bla",b:11},
-    {a: "bla",b:12},
+    {a: "aha",b:'1'},
+    {a: "bla",b:'2'},
+    {a: "bla",b:'3'},
+    {a: "bla",b:'4'},
+    {a: "bla",b:'5'},
+    {a: "bla",b:'6'},
+    {a: "aha",b:'7'},
+    {a: "bla",b:'8'},
+    {a: "bla",b:'9'},
+    {a: "bla",b:'10'},
+    {a: "bla",b:'11'},
+    {a: "bla",b:'12'},
 
 ];
 
-function findItemById(items:Item[], id:number) {
+function findItemById(items:Item[], id:string) {
     for(let i=0; i<items.length; i++) {
         const item = items[i];
         if(item.b === id) return i;
@@ -43,6 +43,7 @@ interface EditorProps {
     value:string;
     onRequestValueChange: (value:string)=>any;
     onRequestClose: ()=>any;
+    item: Item;
 }
 
 const rootCss = style({
@@ -51,20 +52,19 @@ const rootCss = style({
     backgroundColor: 'white',
 });
 
-const FullscreenEditor = ({value, onRequestClose, onRequestValueChange}:EditorProps) => (<div className={rootCss}>
+const FullscreenEditor = ({value, onRequestClose, onRequestValueChange, item}:EditorProps) => (<div className={rootCss}>
     <BasicAppBar title={"haha"}/>
     <AppBarMain>
-        {value}
+        {JSON.stringify(item)}
     </AppBarMain>
 </div>);
 
 const EnhancedTable = createEnhancedTable((item:Item)=>item.b,
-    {field: "a", editComponent:FullscreenEditor, editMode:"fullscreen"},
-    {field: "b", editComponent:IntegerEditor}
+    {field: "a", editComponent:FullscreenEditor, editMode:"fullscreen"}
 );
 
 const onItemEdit = {
-    "a":(id:Number, value:string) => {console.log(id, value)}
+    "a":(id:string, value:string) => {console.log(id, value)}
 };
 
 ReactDom.render(<div>
