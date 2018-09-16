@@ -34,7 +34,7 @@ type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     disableSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
     displayComponent?: React.ComponentType<{value: ItemType[Field]}>,
-    editComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange:(value: ItemType[Field])=>any, onRequestClose:()=>any, item:ItemType}>;
+    editComponent?: React.ComponentType<{value?: ItemType[Field], onRequestValueChange?:(value: ItemType[Field])=>any, onRequestClose?:()=>any, item?:ItemType}>;
     editMode?: 'popover'|'fullscreen'
 };
 
