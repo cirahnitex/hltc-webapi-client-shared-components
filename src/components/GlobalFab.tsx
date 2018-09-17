@@ -41,6 +41,18 @@ class FabWrap extends React.PureComponent<{}, State> {
             existingFab:fab
         });
     };
+    setFab(fab:ButtonProps|null) {
+        if(this.state.existingFab) {
+            if(!shallowEqual(fab, this.state.existingFab)) {
+               this.setState({fab});
+            }
+        }
+        else {
+            if(fab) {
+                this.setState({fab, existingFab:fab});
+            }
+        }
+    }
     render() {
         const {fab, existingFab} = this.state;
         if(!existingFab) {
@@ -56,15 +68,7 @@ let fabStack: (ButtonProps|null)[] = [];
 
 function setGlobalFab(fab: ButtonProps | null) {
     if(!FabWrap.instance) return;
-    if(fabStack.find(x=>shallowEqual(x, fab))) return;
-    if(FabWrap.instance.state.existingFab) {
-        if(!shallowEqual(fab, FabWrap.instance.state.existingFab)) {
-            FabWrap.instance.setState({fab});
-        }
-    }
-    else {
-        FabWrap.instance.setState({fab, existingFab:fab});
-    }
+    FabWrap.instance.setFab(fab);
     fabStack.push(fab);
 }
 
@@ -72,12 +76,13 @@ function removeGlobalFab(fab: ButtonProps | null) {
     if(!FabWrap.instance) return;
     if(shallowEqual(top(fabStack), fab)) {
         fabStack.pop();
-        FabWrap.instance.setState({fab:top(fabStack)});
+        FabWrap.instance.setFab(top(fabStack));
     }
     else {
-        const index = fabStack.findIndex(x=>shallowEqual(x, fab));
-        if(index>=0) {
-            fabStack.splice(index, 1);
+        // use reversedIndex because we want to remove the last match
+        const reversedIndex = fabStack.reverse().findIndex(x=>shallowEqual(x, fab));
+        if(reversedIndex>=0) {
+            fabStack.splice(fabStack.length - 1 - reversedIndex, 1);
         }
     }
 }

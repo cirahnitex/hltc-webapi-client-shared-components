@@ -9,6 +9,7 @@ import BackIcon from "@material-ui/icons/ArrowBack";
 import AppBarMain from "./components/commonAppBars/AppBarMain";
 import Paper from "@material-ui/core/Paper/Paper";
 import {style} from "typestyle";
+import GlobalFab from "./components/GlobalFab";
 
 interface Item {
     a: string,
@@ -53,10 +54,11 @@ const rootCss = style({
 });
 
 const FullscreenEditor = ({value, onRequestClose, onRequestValueChange, item}:EditorProps) => (<div className={rootCss}>
-    <BasicAppBar title={"haha"}/>
+    <IconAppBar title={"haha"} icon={<BackIcon/>} onIconClick={onRequestClose}/>
     <AppBarMain>
         {JSON.stringify(item)}
     </AppBarMain>
+    {GlobalFab.nil()}
 </div>);
 
 const EnhancedTable = createEnhancedTable((item:Item)=>item.b,
@@ -72,5 +74,5 @@ ReactDom.render(<div>
     <AppBarMain>
         <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit}/>
     </AppBarMain>
-
+    <GlobalFab color={"secondary"}>l0</GlobalFab>
 </div>, document.getElementById('root'));
