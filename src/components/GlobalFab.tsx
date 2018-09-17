@@ -19,7 +19,7 @@ function shallowEqual(x:ButtonProps|null, y:ButtonProps|null) {
     return true;
 }
 
-function top(fabStack:ButtonProps[]):ButtonProps | null {
+function top(fabStack:(ButtonProps|null)[]):ButtonProps | null {
     if(fabStack.length<=0) return null;
     return fabStack[fabStack.length-1];
 }
@@ -52,9 +52,9 @@ class FabWrap extends React.PureComponent<{}, State> {
     }
 }
 
-let fabStack: ButtonProps[] = [];
+let fabStack: (ButtonProps|null)[] = [];
 
-function setGlobalFab(fab: ButtonProps) {
+function setGlobalFab(fab: ButtonProps | null) {
     if(!FabWrap.instance) return;
     if(fabStack.find(x=>shallowEqual(x, fab))) return;
     if(FabWrap.instance.state.existingFab) {
@@ -68,7 +68,7 @@ function setGlobalFab(fab: ButtonProps) {
     fabStack.push(fab);
 }
 
-function removeGlobalFab(fab: ButtonProps) {
+function removeGlobalFab(fab: ButtonProps | null) {
     if(!FabWrap.instance) return;
     if(shallowEqual(top(fabStack), fab)) {
         fabStack.pop();
@@ -92,6 +92,18 @@ ReactDom.render(<FabWrap />, root);
 
 type Props = ButtonProps;
 
+class NilFab extends React.PureComponent<{},{}> {
+    componentWillUnmount() {
+        removeGlobalFab(null);
+    }
+    componentDidMount() {
+        setGlobalFab(null);
+    }
+    render() {
+        return <div />
+    }
+}
+
 export default class GlobalFab extends React.PureComponent<Props, {}> {
     componentWillUnmount() {
         removeGlobalFab(this.props);
@@ -105,4 +117,5 @@ export default class GlobalFab extends React.PureComponent<Props, {}> {
     render() {
         return <div />
     }
+    static NIL = <NilFab/>
 }
