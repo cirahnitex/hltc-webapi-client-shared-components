@@ -117,5 +117,5 @@ export default class GlobalFab extends React.PureComponent<Props, {}> {
     render() {
         return <div />
     }
-    static NIL = <NilFab/>
+    static nil() {return <NilFab/>}
 }
