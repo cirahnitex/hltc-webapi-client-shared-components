@@ -164,7 +164,7 @@ interface EnhancedTableProps<ItemType, IDType> {
     items: ItemType[],
     selection?: IDType[],
     onRequestSelectionChange?: (selection:IDType[])=>any,
-    actions?: React.ReactFragment,
+    selectionActions?: React.ReactFragment,
     onBeforeItemEdit?: (id:IDType, field: keyof ItemType & string)=>any,
     onItemEdit?: {[Field in keyof ItemType & string]?:(id:IDType, value:ItemType[Field])=>any},
     onCloseItemEdit?: (id:IDType, field: keyof ItemType & string)=>any,
@@ -545,14 +545,14 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             return <Display value={item[column.field]} />
         }
         render() {
-            const {classes, title, selection, actions, negativeMargin} = this.props;
+            const {classes, title, selection, selectionActions, negativeMargin} = this.props;
             const {order, orderBy} = this.state;
             const data = this.getSortedData();
             const numSelected = selection == null?null:selection.length;
             const rootClassName = negativeMargin?[classes.root, classes.negativeMargin].join(" "):classes.root;
             return (
                 <div className={rootClassName}>
-                    <EnhancedTableToolbar numSelected={numSelected} title={title} actions={actions}/>
+                    <EnhancedTableToolbar numSelected={numSelected} title={title} actions={numSelected && selectionActions || undefined}/>
                     {data.length>0 && <div className={classes.tableWrapper}>
                         <Table>
                             <EnhancedTableHead
@@ -575,7 +575,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                                             key={getID(n)}
                                             selected={isSelected}
                                         >
-                                            {numSelected != null && <TableCell padding="checkbox">
+                                            {numSelected != null && <TableCell padding="checkbox" style={{width:48}}>
                                                 <Checkbox checked={isSelected} onChange={e=>this.handleRowCheckChange(getID(n))}/>
                                             </TableCell>}
                                             {columns.map((column, columnIndex)=><TableCell

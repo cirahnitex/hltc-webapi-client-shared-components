@@ -72,7 +72,7 @@ const onItemEdit = {
 ReactDom.render(<div>
     <IconAppBar icon={<BackIcon />} title={"my app"}/>
     <AppBarMain>
-        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit}/>
+        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={["1"]} selectionActions={<BackIcon/>}/>
     </AppBarMain>
     <GlobalFab color={"secondary"}>l0</GlobalFab>
 </div>, document.getElementById('root'));
