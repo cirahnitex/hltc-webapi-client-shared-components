@@ -5,6 +5,13 @@ class ServerError extends Error {
     }
 }
 
+function toString(x:any) {
+    if(x instanceof Date) {
+        return x.toISOString();
+    }
+    return x.toString();
+}
+
 export default class Api {
     static setLocationSearch(data: any) {
         window.history.replaceState(null, "", '?' + Api.encodeQueryString(data));
@@ -19,7 +26,7 @@ export default class Api {
         const pieces = [];
         for (let key in obj) {
             if (!obj.hasOwnProperty(key)) continue;
-            pieces.push(encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]));
+            pieces.push(encodeURIComponent(key) + "=" + encodeURIComponent(toString(obj[key])));
         }
 
         return pieces.join("&");
