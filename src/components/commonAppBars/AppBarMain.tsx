@@ -12,9 +12,21 @@ const rootCss = style({
         }
     }
 });
+const rootCssNoPadding = style({
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: "column",
+    padding: "56px 0 0 0",
+    $nest: {
+        "@media (min-width: 600px)": {
+            padding: "64px 0 0 0",
+        }
+    }
+});
 interface Props {
+    disablePadding?: boolean;
     children: React.ReactFragment;
 }
-export default function AppBarMain({children}:Props) {
-    return <div className={rootCss}>{children}</div>
+export default function AppBarMain({disablePadding, children}:Props) {
+    return <div className={disablePadding?rootCssNoPadding:rootCss}>{children}</div>
 }
