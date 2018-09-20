@@ -20,10 +20,8 @@ import Popover, {PopoverOrigin} from "@material-ui/core/Popover/Popover";
 import TextDisplay from "./TextDisplay";
 import {style} from "typestyle";
 import FullscreenSlideIn from "../FullscreenSlideIn";
-
-const Tooltip = require("@material-ui/core/umd/material-ui.development").Tooltip;
-
-const TableRow = require("@material-ui/core/umd/material-ui.development").TableRow;
+import TableRow from "@material-ui/core/TableRow/TableRow";
+import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 
 
 type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
@@ -162,7 +160,7 @@ function createEnhancedToolbar<ItemType>() {
     return withStyles(toolbarStyles)(EnhancedTableToolbar);
 }
 
-interface EnhancedTableProps<ItemType, IDType> {
+interface EnhancedTableProps<ItemType, IDType> extends React.HTMLAttributes<HTMLElement> {
     title: string,
     items: ItemType[],
     selection?: IDType[],
@@ -545,13 +543,13 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             return <Display value={item[column.field]} onRequestValueChange={(v)=>this.submitEditing(getID(item), columnIndex,v)} />
         }
         render() {
-            const {classes, title, selection, selectionActions, negativeMargin} = this.props;
+            const { title, classes, items, selection, onRequestSelectionChange, selectionActions, onItemEdit, negativeMargin, className, ...others} = this.props;
             const {order, orderBy} = this.state;
             const data = this.getSortedData();
             const numSelected = selection == null?null:selection.length;
             const rootClassName = negativeMargin?[classes.root, classes.negativeMargin].join(" "):classes.root;
             return (
-                <div className={rootClassName}>
+                <div className={className?`${rootClassName} ${className}`:rootClassName} {...others}>
                     <EnhancedTableToolbar numSelected={numSelected} title={title} actions={numSelected && selectionActions || undefined}/>
                     {data.length>0 && <div className={classes.tableWrapper}>
                         <Table>
