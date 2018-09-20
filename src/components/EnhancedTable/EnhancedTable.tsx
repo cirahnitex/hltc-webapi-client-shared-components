@@ -33,7 +33,7 @@ type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     label?: string,
     disableSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
-    displayComponent?: React.ComponentType<{value: ItemType[Field]}>,
+    displayComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange?:(value: ItemType[Field])=>any}>,
     editComponent?: React.ComponentType<{value?: ItemType[Field], onRequestValueChange?:(value: ItemType[Field])=>any, onRequestClose?:()=>any, item?:ItemType}>;
     editMode?: 'popover'|'fullscreen'
 };
@@ -165,9 +165,7 @@ interface EnhancedTableProps<ItemType, IDType> {
     selection?: IDType[],
     onRequestSelectionChange?: (selection:IDType[])=>any,
     selectionActions?: React.ReactFragment,
-    onBeforeItemEdit?: (id:IDType, field: keyof ItemType & string)=>any,
     onItemEdit?: {[Field in keyof ItemType & string]?:(id:IDType, value:ItemType[Field])=>any},
-    onCloseItemEdit?: (id:IDType, field: keyof ItemType & string)=>any,
     negativeMargin?: boolean,
 }
 
@@ -491,19 +489,19 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             if(this.props.onRequestSelectionChange) this.props.onRequestSelectionChange(newSelected);
         };
         handleItemEdit = (el:HTMLElement, id:IDType, column:number, value:any, item:ItemType)=>{
-            this.props.onBeforeItemEdit && this.props.onBeforeItemEdit(id, columns[column].field);
             this.setState({editingAnchorEl:el, editingId:id, editingColumn:column, editingOriValue:value, editingItem:item})
         };
         handleCloseEditing = ()=>{
-            const {editingId, editingColumn} = this.state;
             this.setState({editingAnchorEl:null});
-            this.props.onCloseItemEdit && this.props.onCloseItemEdit(editingId!, columns[editingColumn!].field);
         };
-        handleSubmitEditing = (newValue: any)=>{
+        submitEditing(editingId:IDType, editingColumn:number, newValue:any) {
+            const editingField = columns[editingColumn].field;
+            this.props.onItemEdit && this.props.onItemEdit[editingField] && this.props.onItemEdit[editingField](editingId, newValue!);
+        }
+        handleSubmitEditingFromEditingComponent = (newValue: any)=>{
             const {editingId, editingColumn} = this.state;
             if(editingId != null && editingColumn != null) {
-                const editingField = columns[editingColumn].field;
-                this.props.onItemEdit && this.props.onItemEdit[editingField] && this.props.onItemEdit[editingField](editingId, newValue!);
+                this.submitEditing(editingId, editingColumn, newValue);
             }
             this.handleCloseEditing();
         };
@@ -521,7 +519,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             const EditComponent = editingColumn != null && columns[editingColumn].editComponent || null;
             return <Popover anchorEl={editingAnchorEl} open={!!editingAnchorEl} onClose={this.handleCloseEditing} anchorOrigin={this.getEditingPopoverOrigin()}>
                 <div className={classes.editingWrap}>
-                    {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing} item={editingItem!}/>}
+                    {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditingFromEditingComponent} onRequestClose={this.handleCloseEditing} item={editingItem!}/>}
                 </div>
             </Popover>
         }
@@ -529,7 +527,7 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             const {editingAnchorEl, editingColumn, editingOriValue,  editingItem} = this.state;
             const EditComponent = editingColumn != null && columns[editingColumn].editComponent || null;
             return <FullscreenSlideIn in={!!editingAnchorEl}>
-                {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditing} onRequestClose={this.handleCloseEditing} item={editingItem!}/>}
+                {EditComponent && <EditComponent value={editingOriValue} onRequestValueChange={this.handleSubmitEditingFromEditingComponent} onRequestClose={this.handleCloseEditing} item={editingItem!}/>}
             </FullscreenSlideIn>
         }
         renderEditing() {
@@ -541,8 +539,8 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
         }
         renderCellDisplay(item:ItemType, columnIndex: number) {
             const column =  columns[columnIndex];
-            const Display = column.displayComponent || TextDisplay;
-            return <Display value={item[column.field]} />
+            const Display:NonNullable<typeof column.displayComponent> = column.displayComponent || TextDisplay;
+            return <Display value={item[column.field]} onRequestValueChange={(v)=>this.submitEditing(getID(item), columnIndex,v)} />
         }
         render() {
             const {classes, title, selection, selectionActions, negativeMargin} = this.props;

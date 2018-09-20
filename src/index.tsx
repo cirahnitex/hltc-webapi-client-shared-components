@@ -10,25 +10,18 @@ import AppBarMain from "./components/commonAppBars/AppBarMain";
 import Paper from "@material-ui/core/Paper/Paper";
 import {style} from "typestyle";
 import GlobalFab from "./components/GlobalFab";
+import BooleanDisplayAndEdit from "./components/EnhancedTable/BooleanDisplayAndEdit";
 
 interface Item {
     a: string,
-    b: string
+    b: string,
+    c:boolean
 }
 
 const items:Item[] = [
-    {a: "aha",b:'1'},
-    {a: "bla",b:'2'},
-    {a: "bla",b:'3'},
-    {a: "bla",b:'4'},
-    {a: "bla",b:'5'},
-    {a: "bla",b:'6'},
-    {a: "aha",b:'7'},
-    {a: "bla",b:'8'},
-    {a: "bla",b:'9'},
-    {a: "bla",b:'10'},
-    {a: "bla",b:'11'},
-    {a: "bla",b:'12'},
+    {a: "aha",b:'1',c:true},
+    {a: "bla",b:'2',c:false},
+    {a: "bla",b:'3',c:true},
 
 ];
 
@@ -62,11 +55,13 @@ const FullscreenEditor = ({value, onRequestClose, onRequestValueChange, item}:Ed
 </div>);
 
 const EnhancedTable = createEnhancedTable((item:Item)=>item.b,
-    {field: "a", editComponent:FullscreenEditor, editMode:"fullscreen"}
+    {field: "a", editComponent:FullscreenEditor, editMode:"fullscreen"},
+    {field: 'c', displayComponent: BooleanDisplayAndEdit}
 );
 
 const onItemEdit = {
-    "a":(id:string, value:string) => {console.log(id, value)}
+    "a":(id:string, value:string) => {console.log(id, value)},
+    "c":(id:string, value:boolean) => {console.log(value)}
 };
 
 ReactDom.render(<div>
