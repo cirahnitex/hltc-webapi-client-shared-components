@@ -33,7 +33,7 @@ export default class MediaRecorder{
     input: MediaStreamAudioSourceNode | null = null;
     processor: ScriptProcessorNode | null = null;
     context: AudioContext | null;
-    constructor(stream:MediaStream) {
+    constructor(stream:MediaStream, options?:any) {
         this.stream = stream;
         this.em = document.createDocumentFragment();
         this.encoder = createWorker(workerSource);
