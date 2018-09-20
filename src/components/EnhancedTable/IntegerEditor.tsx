@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button/Button";
 import {style} from "typestyle";
 
 const rootCss = style({
+    padding: '8px 16px',
     display: "flex",
     flexDirection: "column",
     alignItems: 'flex-end'
