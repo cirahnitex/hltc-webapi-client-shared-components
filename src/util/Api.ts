@@ -18,8 +18,14 @@ export default class Api {
     }
 
     static resolve(path: string) {
-        if (path.indexOf('/') === 0 && window.location.host.startsWith('localhost')) return "http://hltc.cs.ust.hk/webapi" + path;
-        return '/webapi' + path;
+        if (path.indexOf('/') === 0) {
+            if(window.location.host.startsWith('localhost')) return "http://hltc.cs.ust.hk/webapi" + path;
+            else return '/webapi' + path;
+        }
+        else if(path.indexOf("http") === 0) {
+            return path;
+        }
+        throw new Error(`invalid path ${path}`);
     }
 
     static encodeQueryString(obj: any): string {
