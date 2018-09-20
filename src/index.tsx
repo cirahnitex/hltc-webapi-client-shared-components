@@ -56,6 +56,7 @@ const FullscreenEditor = ({value, onRequestClose, onRequestValueChange, item}:Ed
 
 const EnhancedTable = createEnhancedTable((item:Item)=>item.b,
     {field: "a", editComponent:FullscreenEditor, editMode:"fullscreen"},
+    {field: "b", editComponent: TextEditor},
     {field: 'c', displayComponent: BooleanDisplayAndEdit}
 );
 

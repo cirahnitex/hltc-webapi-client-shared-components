@@ -31,6 +31,7 @@ type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     numeric?: boolean,
     disablePadding?: boolean,
     label?: string,
+    tooltip?: string,
     disableSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
     displayComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange?:(value: ItemType[Field])=>any}>,
@@ -53,6 +54,17 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemT
         createSortHandler = (property:Key) => (event:any) => {
             this.props.onRequestSort(property);
         };
+        renderWithinTooltip(column:FieldConfig<ItemType, any>) {
+            const {order, orderBy } = this.props;
+            if(column.disableSorting) return column.label || column.field;
+            return <TableSortLabel
+                active={orderBy === column.field}
+                direction={order}
+                onClick={this.createSortHandler(column.field)}
+            >
+                {column.label || column.field}
+            </TableSortLabel>
+        }
         render() {
             const {className, onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
 
@@ -74,20 +86,11 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemT
                                     padding={column.disablePadding ? 'none' : 'default'}
                                     sortDirection={orderBy === column.field ? order : false}
                                 >
-                                    {column.disableSorting && column.label}
-                                    {!column.disableSorting && <Tooltip
-                                        title="Sort"
-                                        placement={column.numeric ? 'bottom-end' : 'bottom-start'}
-                                        enterDelay={300}
-                                    >
-                                        <TableSortLabel
-                                            active={orderBy === column.field}
-                                            direction={order}
-                                            onClick={this.createSortHandler(column.field)}
-                                        >
-                                            {column.label || column.field}
-                                        </TableSortLabel>
-                                    </Tooltip>}
+                                    {column.tooltip!=null ?
+                                        <Tooltip title={column.tooltip}
+                                                 placement={column.numeric ? 'bottom-end' : 'bottom-start'}>
+                                            {this.renderWithinTooltip(column)}
+                                        </Tooltip> : this.renderWithinTooltip(column)}
                                 </TableCell>
                             );
                         }, this)}
@@ -399,7 +402,6 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
             paddingLeft: 24,
         },
         editingWrap: {
-            padding: "16px 24px",
             backgroundColor: theme.palette.background.default
         },
         editingInput: {

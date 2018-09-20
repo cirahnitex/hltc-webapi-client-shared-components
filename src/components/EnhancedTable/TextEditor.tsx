@@ -4,14 +4,9 @@ import Button from "@material-ui/core/Button/Button";
 import {style} from "typestyle";
 
 const rootCss = style({
+    padding: 8,
     display: "flex",
     flexDirection: "column",
-});
-
-const btnWrap = style({
-    margin: '8px -16px 0px -16px',
-    display: "flex",
-    justifyContent: "flex-end"
 });
 
 interface Props {
@@ -36,10 +31,9 @@ export default class TextEditor extends React.PureComponent<Props, State> {
         const {value} = this.props;
         const {editingValue} = this.state;
         return <div className={rootCss}>
-            <Input value={editingValue} onChange={this.handleEditingValueChange}/>
-            <div className={btnWrap}>
-                <Button color={"primary"} disabled={value === editingValue} onClick={this.handleSubmit}>SAVE</Button>
-            </div>
+            <textarea value={editingValue} onChange={this.handleEditingValueChange}/>
+            <div style={{height:8}} />
+            <Button color={"primary"} disabled={value === editingValue} onClick={this.handleSubmit} variant={"raised"} size={"small"}>SAVE</Button>
         </div>
     }
 }
