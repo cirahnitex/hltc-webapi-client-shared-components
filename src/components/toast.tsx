@@ -65,7 +65,7 @@ window.addEventListener('load', function() {
     ReactDom.render( <Toast/>,toastWrap);
 });
 
-export default function toast(msg:string|Error) {
+export function toast(msg:string|Error) {
     if(msg instanceof Error) {
         console.error(msg);
         msg = msg.message;
