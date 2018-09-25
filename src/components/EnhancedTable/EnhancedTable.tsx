@@ -24,7 +24,7 @@ import TableRow from "@material-ui/core/TableRow/TableRow";
 import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 
 export interface DisplayComponentProps<ItemType, Field extends keyof ItemType & string> {
-    value?: ItemType[Field],
+    value: ItemType[Field],
     onRequestValueChange?:(value: ItemType[Field])=>any
 }
 
