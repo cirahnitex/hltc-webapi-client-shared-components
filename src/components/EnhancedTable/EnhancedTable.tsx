@@ -23,6 +23,17 @@ import FullscreenSlideIn from "../FullscreenSlideIn";
 import TableRow from "@material-ui/core/TableRow/TableRow";
 import Tooltip from "@material-ui/core/Tooltip/Tooltip";
 
+export interface DisplayComponentProps<ItemType, Field extends keyof ItemType & string> {
+    value?: ItemType[Field],
+    onRequestValueChange?:(value: ItemType[Field])=>any
+}
+
+export interface EditComponentProps<ItemType, Field extends keyof ItemType & string> {
+    value?: ItemType[Field],
+    onRequestValueChange?:(value: ItemType[Field])=>any,
+    onRequestClose?:()=>any,
+    item?:ItemType
+}
 
 type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     field: Field,
@@ -32,8 +43,8 @@ type FieldConfig<ItemType, Field extends keyof ItemType & string> = {
     tooltip?: string,
     disableSorting?: boolean,
     compareFunction?: ((a:ItemType, b:ItemType)=>number),
-    displayComponent?: React.ComponentType<{value: ItemType[Field], onRequestValueChange?:(value: ItemType[Field])=>any}>,
-    editComponent?: React.ComponentType<{value?: ItemType[Field], onRequestValueChange?:(value: ItemType[Field])=>any, onRequestClose?:()=>any, item?:ItemType}>;
+    displayComponent?: React.ComponentType<DisplayComponentProps<ItemType, Field>>,
+    editComponent?: React.ComponentType<EditComponentProps<ItemType, Field>>;
     editMode?: 'popover'|'fullscreen'
 };
 
