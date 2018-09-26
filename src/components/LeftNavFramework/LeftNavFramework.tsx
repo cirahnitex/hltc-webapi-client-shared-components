@@ -11,6 +11,7 @@ import Toolbar from "@material-ui/core/Toolbar/Toolbar";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import Hidden from "@material-ui/core/Hidden/Hidden";
 import Drawer from "@material-ui/core/Drawer/Drawer";
+import {IOS_VK_OPEN_CSS_CLASS_ON_BODY} from "../InputSlideUpWithIosVK";
 
 type AddonToReactElement = (addonWrap: HTMLDivElement) => React.ReactElement<any>;
 
@@ -63,6 +64,9 @@ const classes = {
         $nest: {
             [breakpointCss]: {
                 width: `calc(100% - ${drawerWidth}px) !important`,
+            },
+            [`.${IOS_VK_OPEN_CSS_CLASS_ON_BODY} &`]:{
+                top: '270px !important'
             }
         }
     }),

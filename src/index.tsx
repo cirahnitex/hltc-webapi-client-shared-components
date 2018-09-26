@@ -12,6 +12,8 @@ import {style} from "typestyle";
 import GlobalFab from "./components/GlobalFab";
 import BooleanDisplayAndEdit from "./components/EnhancedTable/BooleanDisplayAndEdit";
 import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
+import TextField from "@material-ui/core/TextField/TextField";
+import {createInputSlideUpWithIosVK} from "./components/InputSlideUpWithIosVK";
 
 interface Item {
     a: string,
@@ -66,10 +68,13 @@ const onItemEdit = {
     "c":(id:string, value:boolean) => {console.log(value)}
 };
 
+const AwesomeTextField = createInputSlideUpWithIosVK(TextField);
+
 ReactDom.render(<div>
     <IconSearchAppBar icon={<BackIcon />} title={"my app"} onIconClick={()=>{}}/>
     <AppBarMain>
         <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={[]} selectionActions={<BackIcon/>}/>
+        <AwesomeTextField />
     </AppBarMain>
     <GlobalFab color={"secondary"}>l0</GlobalFab>
 </div>, document.getElementById('root'));

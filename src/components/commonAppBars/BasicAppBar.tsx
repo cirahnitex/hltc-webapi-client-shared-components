@@ -2,40 +2,41 @@ import * as React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import {Theme, withStyles} from '@material-ui/core/styles';
-import {CSSProperties} from "@material-ui/core/styles/withStyles";
+import {style} from "typestyle";
+import {IOS_VK_OPEN_CSS_CLASS_ON_BODY} from "../InputSlideUpWithIosVK";
 
-const styles = (theme:Theme) => ({
-    root: {
-        width: '100%'
-    } as CSSProperties,
-    title: {
-        padding: '0 8px',
-    } as CSSProperties
+
+const rootCss = style({
+    $nest: {
+        [`.${IOS_VK_OPEN_CSS_CLASS_ON_BODY} &`]:{
+            top: '270px !important'
+        }
+    }
+});
+
+const titleCss = style({
+    padding: '0 8px'
 });
 
 interface Props {
-    classes: Record<keyof ReturnType<typeof styles>, string>;
     leftWidget?: React.ReactFragment;
     title: string;
     children?: React.ReactFragment;
 }
 
 function BasicAppBar(props:Props) {
-    const { title, leftWidget,  classes, children } = props;
+    const { title, leftWidget,  children } = props;
     return (
-        <div className={classes.root}>
-            <AppBar>
-                <Toolbar>
-                    {leftWidget}
-                    <Typography className={classes.title} variant="title" color="inherit" noWrap>
-                        {title}
-                    </Typography>
-                    {children}
-                </Toolbar>
-            </AppBar>
-        </div>
+        <AppBar className={rootCss}>
+            <Toolbar>
+                {leftWidget}
+                <Typography className={titleCss} variant="title" color="inherit" noWrap>
+                    {title}
+                </Typography>
+                {children}
+            </Toolbar>
+        </AppBar>
     );
 }
 
-export default withStyles(styles)(BasicAppBar);
+export default BasicAppBar;
