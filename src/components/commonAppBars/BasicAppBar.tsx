@@ -10,7 +10,7 @@ const styles = (theme:Theme) => ({
         width: '100%'
     } as CSSProperties,
     title: {
-        padding: '0 16px',
+        padding: '0 8px',
     } as CSSProperties
 });
 

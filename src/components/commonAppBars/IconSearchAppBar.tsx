@@ -17,15 +17,9 @@ const styles = (theme:Theme) => ({
         '&:hover': {
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing.unit,
-            width: 'auto',
-        },
     } as CSSProperties,
     searchIcon: {
-        width: theme.spacing.unit * 7,
+        width: theme.spacing.unit * 5,
         height: '100%',
         position: 'absolute',
         pointerEvents: 'none',
@@ -41,9 +35,13 @@ const styles = (theme:Theme) => ({
         paddingTop: theme.spacing.unit,
         paddingRight: theme.spacing.unit,
         paddingBottom: theme.spacing.unit,
-        paddingLeft: theme.spacing.unit * 7,
+        paddingLeft: theme.spacing.unit * 5,
         transition: theme.transitions.create('width'),
-        width: '100%',
+        fontSize: '14px',
+        width: 60,
+        '&:focus': {
+            width: 120,
+        },
         [theme.breakpoints.up('sm')]: {
             width: 120,
             '&:focus': {
@@ -71,7 +69,7 @@ function IconSearchAppBar(props:Props) {
                 <SearchIcon />
             </div>
             <Input
-                placeholder="Search…"
+                placeholder="search…"
                 disableUnderline
                 classes={{
                     root: classes.inputRoot,

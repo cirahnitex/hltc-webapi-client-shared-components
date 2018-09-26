@@ -95,16 +95,16 @@ const classes = {
         justifyContent: "center"
     }),
     title: style({
-        padding: '0 16px',
+        padding: '0 8px',
     }),
     content: style({
         flexGrow: 1,
-        padding: "72px 32px 16px 32px",
+        padding: "72px 24px 16px 24px",
         display: 'flex',
         flexDirection: 'column',
         $nest: {
             [mediumCss]: {
-                padding: "80px 40px 16px 40px",
+                padding: "80px 32px 16px 32px",
             },
             [breakpointCss]: {
                 marginLeft: `${drawerWidth}px`,

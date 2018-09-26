@@ -5,10 +5,10 @@ const rootCss = style({
     flexGrow: 1,
     display: 'flex',
     flexDirection: "column",
-    padding: "72px 32px 16px 32px",
+    padding: "72px 24px 16px 24px",
     $nest: {
         "@media (min-width: 600px)": {
-            padding: "80px 40px 16px 40px",
+            padding: "80px 32px 16px 32px",
         }
     }
 });

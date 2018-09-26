@@ -11,6 +11,7 @@ import Paper from "@material-ui/core/Paper/Paper";
 import {style} from "typestyle";
 import GlobalFab from "./components/GlobalFab";
 import BooleanDisplayAndEdit from "./components/EnhancedTable/BooleanDisplayAndEdit";
+import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
 
 interface Item {
     a: string,
@@ -66,9 +67,9 @@ const onItemEdit = {
 };
 
 ReactDom.render(<div>
-    <IconAppBar icon={<BackIcon />} title={"my app"}/>
+    <IconSearchAppBar icon={<BackIcon />} title={"my app"} onIconClick={()=>{}}/>
     <AppBarMain>
-        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={["1"]} selectionActions={<BackIcon/>}/>
+        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={[]} selectionActions={<BackIcon/>}/>
     </AppBarMain>
     <GlobalFab color={"secondary"}>l0</GlobalFab>
 </div>, document.getElementById('root'));

@@ -114,7 +114,11 @@ function createEnhancedToolbar<ItemType>() {
 
     const toolbarStyles = (theme:Theme) => ({
         root: {
-            paddingRight: theme.spacing.unit,
+            padding: '0 24px',
+            minHeight: 56,
+            display: "flex",
+            position: "relative" as any,
+            alignItems: "center" as any
         },
         highlight:
             theme.palette.type === 'light'
@@ -147,7 +151,7 @@ function createEnhancedToolbar<ItemType>() {
     let EnhancedTableToolbar = (props:Props) => {
         const { numSelected, classes, actions } = props;
         return (
-            <Toolbar
+            <div
                 className={classNames(classes.root, {
                     [classes.highlight]: numSelected && numSelected > 0,
                 })}
@@ -164,7 +168,7 @@ function createEnhancedToolbar<ItemType>() {
                 <div className={classes.spacer} />
                 {actions && <div className={classes.actions}>{actions}
                 </div>}
-            </Toolbar>
+            </div>
         );
     };
 
