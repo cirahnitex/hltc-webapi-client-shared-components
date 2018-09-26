@@ -37,7 +37,7 @@ const styles = (theme:Theme) => ({
         paddingBottom: theme.spacing.unit,
         paddingLeft: theme.spacing.unit * 5,
         transition: theme.transitions.create('width'),
-        fontSize: '14px',
+        fontSize: '16px',
         width: 60,
         '&:focus': {
             width: 120,
@@ -69,7 +69,7 @@ function IconSearchAppBar(props:Props) {
                 <SearchIcon />
             </div>
             <Input
-                placeholder="search…"
+                placeholder="search"
                 disableUnderline
                 classes={{
                     root: classes.inputRoot,
