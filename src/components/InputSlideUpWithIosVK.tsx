@@ -1,16 +1,12 @@
 import * as React from 'react';
 
-export const IOS_VK_OPEN_CSS_CLASS_ON_BODY = 'ios-virtual-keyboard-opened';
-
 let timer = 0;
 function handleFocus() {
     timer = window.setTimeout(function() {
-        document.body.classList.add(IOS_VK_OPEN_CSS_CLASS_ON_BODY);
         document.body.scrollTop = 270;
     }, 200);
 }
 function handleBlur() {
-    document.body.classList.remove(IOS_VK_OPEN_CSS_CLASS_ON_BODY);
     if(timer) {
         window.clearTimeout(timer);
         timer = 0;
