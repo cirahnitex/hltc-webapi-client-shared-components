@@ -62,7 +62,6 @@ class ErrorToast extends React.Component<{},State> {
                 horizontal: 'left',
             }}
             open={this.state.open}
-            autoHideDuration={5000}
             onClose={this.handleClose}
         >
             <SnackbarContent
