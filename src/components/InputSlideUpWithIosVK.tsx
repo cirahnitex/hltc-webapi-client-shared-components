@@ -22,7 +22,7 @@ interface FocusProps {
     onBlur?: (event:any)=>any;
 }
 
-const iOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
+const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
 export function createInputSlideUpWithIosVK<T extends FocusProps>(Component: React.ComponentType<T>) {
     if(iOS) {
