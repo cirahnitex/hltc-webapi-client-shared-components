@@ -14,7 +14,7 @@ import BooleanDisplayAndEdit from "./components/EnhancedTable/BooleanDisplayAndE
 import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
 import TextField from "@material-ui/core/TextField/TextField";
 import {createInputSlideUpWithIosVK} from "./components/InputSlideUpWithIosVK";
-import BrowserHistoryAnchor from "./components/BrowserHistoryAnchor";
+import BrowserHistoryStack from "./components/BrowserHistoryStack";
 
 interface Item {
     a: string,
@@ -77,6 +77,7 @@ interface Props{
 interface State {
     mountChildren: boolean;
     mount2children: boolean;
+    mountSibling: boolean;
 }
 
 class App extends React.PureComponent<Props, State> {
@@ -84,29 +85,34 @@ class App extends React.PureComponent<Props, State> {
         super(props);
         this.state = {
             mountChildren: false,
-            mount2children: false
+            mount2children: false,
+            mountSibling: false,
         }
     }
-    handleRootAnchor = ()=>this.setState({mountChildren:false, mount2children: false});
-    handleChildrenAnchor = ()=>this.setState({mount2children: false});
-    handleMountChildren = ()=>this.setState({mountChildren: true, mount2children: true});
+    handleBack = ()=>this.setState({mountChildren: false});
+    handle2Back = ()=>this.setState({mount2children: false});
+    handleSiblingBack = ()=>this.setState({mountSibling: false});
+    handleMountChildren = ()=>this.setState({mountChildren: true, mount2children: true, mountSibling:false});
+    handleMountSibling = ()=>this.setState({mountSibling:true, mountChildren:false, mount2children:false});
+    handleUnmountChildren = ()=>this.setState({mountChildren: false, mount2children: false, mountSibling:false});
     render() {
-        return <div >
-
+        return <div>
             <IconSearchAppBar icon={<BackIcon />} title={"my app"} onIconClick={()=>{}}/>
             <AppBarMain>
                 <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={[]} selectionActions={<BackIcon/>}/>
-                {this.state.mountChildren && <BrowserHistoryAnchor onReturnedToAnchor={this.handleChildrenAnchor}>
-                    children
-                    {this.state.mount2children && <BrowserHistoryAnchor>
-                        inner children
-                    </BrowserHistoryAnchor>}
-                </BrowserHistoryAnchor>}
-
+                {this.state.mountChildren && <BrowserHistoryStack onRequestBack={this.handleBack}>
+                    first children
+                    {this.state.mount2children && <BrowserHistoryStack onRequestBack={this.handle2Back}>
+                        this is 2nd children
+                    </BrowserHistoryStack>}
+                </BrowserHistoryStack>}
+                {this.state.mountSibling && <BrowserHistoryStack onRequestBack={this.handleSiblingBack}>
+                    this is sibling
+                </BrowserHistoryStack>}
                 <button onClick={this.handleMountChildren}>mount children</button>
-                <button onClick={this.handleRootAnchor}>unmount children</button>
+                <button onClick={this.handleMountSibling}>mount sibling</button>
+                <button onClick={this.handleUnmountChildren}>unmount all</button>
             </AppBarMain>
-            <BrowserHistoryAnchor onReturnedToAnchor={this.handleRootAnchor} />
         </div>
     }
 }
