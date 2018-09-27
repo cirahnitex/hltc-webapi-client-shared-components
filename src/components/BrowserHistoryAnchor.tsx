@@ -54,7 +54,7 @@ function queueStateToPush(state:number) {
 let uniqueNumber = 0;
 
 interface Props {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     onReturnedToAnchor?: ()=>any;
 }
 export default class BrowserHistoryAnchor extends React.PureComponent<Props, {}> {
@@ -79,6 +79,6 @@ export default class BrowserHistoryAnchor extends React.PureComponent<Props, {}>
         tracedHistory.backUntilRemove(this.id);
     }
     render() {
-        return this.props.children;
+        return this.props.children==null?null:this.props.children;
     }
 }

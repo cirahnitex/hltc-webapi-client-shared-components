@@ -91,7 +91,8 @@ class App extends React.PureComponent<Props, State> {
     handleChildrenAnchor = ()=>this.setState({mount2children: false});
     handleMountChildren = ()=>this.setState({mountChildren: true, mount2children: true});
     render() {
-        return <BrowserHistoryAnchor onReturnedToAnchor={this.handleRootAnchor}>
+        return <div >
+
             <IconSearchAppBar icon={<BackIcon />} title={"my app"} onIconClick={()=>{}}/>
             <AppBarMain>
                 <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={[]} selectionActions={<BackIcon/>}/>
@@ -105,8 +106,8 @@ class App extends React.PureComponent<Props, State> {
                 <button onClick={this.handleMountChildren}>mount children</button>
                 <button onClick={this.handleRootAnchor}>unmount children</button>
             </AppBarMain>
-
-        </BrowserHistoryAnchor>
+            <BrowserHistoryAnchor onReturnedToAnchor={this.handleRootAnchor} />
+        </div>
     }
 }
 
