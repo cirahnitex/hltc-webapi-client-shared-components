@@ -14,6 +14,7 @@ import BooleanDisplayAndEdit from "./components/EnhancedTable/BooleanDisplayAndE
 import IconSearchAppBar from "./components/commonAppBars/IconSearchAppBar";
 import TextField from "@material-ui/core/TextField/TextField";
 import {createInputSlideUpWithIosVK} from "./components/InputSlideUpWithIosVK";
+import BrowserHistoryAnchor from "./components/BrowserHistoryAnchor";
 
 interface Item {
     a: string,
@@ -70,11 +71,43 @@ const onItemEdit = {
 
 const AwesomeTextField = createInputSlideUpWithIosVK(TextField);
 
-ReactDom.render(<div>
-    <IconSearchAppBar icon={<BackIcon />} title={"my app"} onIconClick={()=>{}}/>
-    <AppBarMain>
-        <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={[]} selectionActions={<BackIcon/>}/>
-        <AwesomeTextField />
-    </AppBarMain>
-    <GlobalFab color={"secondary"}>l0</GlobalFab>
-</div>, document.getElementById('root'));
+interface Props{
+
+}
+interface State {
+    mountChildren: boolean;
+    mount2children: boolean;
+}
+
+class App extends React.PureComponent<Props, State> {
+    constructor(props:Props) {
+        super(props);
+        this.state = {
+            mountChildren: false,
+            mount2children: false
+        }
+    }
+    handleRootAnchor = ()=>this.setState({mountChildren:false, mount2children: false});
+    handleChildrenAnchor = ()=>this.setState({mount2children: false});
+    handleMountChildren = ()=>this.setState({mountChildren: true, mount2children: true});
+    render() {
+        return <BrowserHistoryAnchor onReturnedToAnchor={this.handleRootAnchor}>
+            <IconSearchAppBar icon={<BackIcon />} title={"my app"} onIconClick={()=>{}}/>
+            <AppBarMain>
+                <EnhancedTable title={"list of stuffs"} items={items} negativeMargin onItemEdit={onItemEdit} selection={[]} selectionActions={<BackIcon/>}/>
+                {this.state.mountChildren && <BrowserHistoryAnchor onReturnedToAnchor={this.handleChildrenAnchor}>
+                    children
+                    {this.state.mount2children && <BrowserHistoryAnchor>
+                        inner children
+                    </BrowserHistoryAnchor>}
+                </BrowserHistoryAnchor>}
+
+                <button onClick={this.handleMountChildren}>mount children</button>
+                <button onClick={this.handleRootAnchor}>unmount children</button>
+            </AppBarMain>
+
+        </BrowserHistoryAnchor>
+    }
+}
+
+ReactDom.render(<App />, document.getElementById('root'));
