@@ -19,7 +19,8 @@ export default class Api {
 
     static resolve(path: string) {
         if (path.indexOf('/') === 0) {
-            return '/webapi' + path;
+            const baseUrl = (window as any).WEBAPI_BASE_URL;
+            return (baseUrl || '/webapi') + path;
         }
         else if(path.indexOf("http") === 0) {
             return path;
