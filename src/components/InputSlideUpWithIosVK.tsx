@@ -21,7 +21,9 @@ interface FocusProps {
 const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
 export function createInputSlideUpWithIosVK<T extends FocusProps>(Component: React.ComponentType<T>) {
-    if(iOS) {
+    // IOS VK problem does not occur when in native app's WebView, so we use normal input when in WebView
+    // hltc WebView wrapper injects a NativeInject global variable
+    if(iOS && (window as any).NativeInject == null) {
         return (props:T)=>{
             const onFocus = (e:any)=>{
                 handleFocus();
