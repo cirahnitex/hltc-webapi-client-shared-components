@@ -1,7 +1,7 @@
 {
   "name": "hltc-webapi-client-shared-components",
   "description": "shared components for hltc webapi project fontend",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "main": "dist/lib.js",
   "types": "dist/lib.d.ts",
   "dependencies": {
