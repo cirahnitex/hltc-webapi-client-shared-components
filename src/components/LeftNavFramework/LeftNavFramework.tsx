@@ -56,6 +56,7 @@ const classes = {
         position: 'relative',
         display: 'flex',
         width: '100%',
+        flexDirection: 'column'
     }),
     appBar: style({
         position: 'absolute',
