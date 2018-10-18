@@ -54,6 +54,10 @@ export default class Api {
      * @returns {Promise<any>}
      */
     static request(path: string, data?: any) {
+        // make request from RN when possible
+        if((window as any).NativeInject !== null) {
+            return (window as any).NativeInject.apiRequest(path, data);
+        }
         if (typeof(data) === 'undefined') data = {};
         data.format = "json";
         const fetchOptions: RequestInit = {
