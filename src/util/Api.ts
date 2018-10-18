@@ -55,7 +55,7 @@ export default class Api {
      */
     static request(path: string, data?: any) {
         // make request from RN when possible
-        if((window as any).NativeInject !== null) {
+        if((window as any).NativeInject != null) {
             return (window as any).NativeInject.apiRequest(path, data);
         }
         if (typeof(data) === 'undefined') data = {};
