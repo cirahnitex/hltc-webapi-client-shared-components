@@ -16,7 +16,19 @@ type AddonToReactElement = (addonWrap: HTMLDivElement) => React.ReactElement<any
 
 export interface NavItem {
     caption: string | React.ReactFragment,
-    content: NavItem[] | React.ReactElement<any> | AddonToReactElement,
+    content:
+        // this menu has sub-items. please enumerate children
+        NavItem[]
+
+        // this menu has a main view
+        | React.ReactElement<any>
+
+        // this menu has a main view and it also need to add some addons to the AppBar
+        // so please specify a function that returns the main view,
+        // while also being able to access the addon wrap
+        // I know this is non-functional, sorry in advance.
+        // but its handy to use a "Portal" to move your addons into addon wrap
+        | AddonToReactElement,
 }
 
 export interface Props {
