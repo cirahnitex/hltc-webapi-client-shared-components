@@ -7,20 +7,40 @@ import List from "@material-ui/core/List/List";
 
 export type ListEntry = {
     caption: string | React.ReactFragment,
-    nextLevel: ListEntry[] | null;
+    /**
+     * this will be called when
+     * 1) the item is clicked
+     * 2) the item is automatically selected as the default item
+     *
+     * this will NOT be called because of the "path" property changes
+     */
+    onClick?: ()=>any,
+    children?: ListEntry[]
 };
 
 export interface Props {
     items: ListEntry[];
-    path: number[];
-    onRequestPathChange: (path:number[])=>void;
+    path?: number[];
+    onRequestPathChange?: (path:number[])=>void;
     indentLevel?: number;
 }
 
 interface State {
     isExpanded: boolean[];
+    pathFallback: number[]
 }
 
+const getDefaultPath = (items?:ListEntry[]):number[]=>{
+    if(items==null || items.length<=0) {
+        return [];
+    }
+    return [0, ...getDefaultPath(items[0].children)];
+};
+
+const getDefaultItem = (item:ListEntry):ListEntry=>{
+    if(item.children == null) return item;
+    return getDefaultItem(item[0]);
+};
 
 const INDENT_WIDTH = 16;
 
@@ -31,16 +51,35 @@ export default class NestedList extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state ={
-            isExpanded: props.items.map((x,i)=>i===props.path[0])
+            isExpanded: props.items.map((x,i)=>!!props.path && i===props.path[0]),
+
+            // select the default item (the very first item recursively)
+            pathFallback: getDefaultPath(props.items)
         };
+
+        // if the default item is select, also call its "onClick" method
+        if(props.path == null && props.items.length>0) {
+            const defaultItem = getDefaultItem(props.items[0]);
+            if(defaultItem.onClick) defaultItem.onClick();
+        }
         this.setEventHandler(props);
     }
+    handlePathChange = (path: number[])=>{
+        if(this.props.onRequestPathChange) this.props.onRequestPathChange(path);
+        else this.setState({pathFallback:path})
+    };
+    getPath(){return this.props.path || this.state.pathFallback}
     setEventHandler(props:Props) {
         this.handleChildrenPathChange = props.items.map((x, index)=>(subPath: number[])=>{
-            props.onRequestPathChange([index,...subPath]);
+            this.handlePathChange([index,...subPath]);
         });
         this.handleChildrenClick = props.items.map((x,index)=> {
-            if (x.nextLevel == null) return (e:any) => {props.onRequestPathChange([index])};
+            if (x.children == null) {
+                return (e: any) => {
+                    this.handlePathChange([index]);
+                    if(x.onClick) x.onClick();
+                };
+            }
             return ((e:any) => {
                 const isExpanded = [...this.state.isExpanded];
                 isExpanded[index] = !isExpanded[index];
@@ -54,7 +93,7 @@ export default class NestedList extends React.PureComponent<Props, State> {
     renderListEntry(index:number):React.ReactFragment {
         const item = this.props.items[index];
         const indentLevel = this.props.indentLevel || 0;
-        const isInPath = this.props.path.length && this.props.path[0]===index;
+        const isInPath = this.getPath().length && this.getPath()[0]===index;
         let highlightStyle = {};
         if(isInPath) {
             highlightStyle = {color:pink[500],fontWeight:"500"}
@@ -62,7 +101,7 @@ export default class NestedList extends React.PureComponent<Props, State> {
 
         let indentStyle:any = {marginLeft: indentLevel*INDENT_WIDTH};
         let listItemStyle = {};
-        if(item.nextLevel == null && isInPath) {
+        if(item.children == null && isInPath) {
             indentStyle = {
                 marginLeft: indentStyle.marginLeft - 4,
             };
@@ -77,9 +116,11 @@ export default class NestedList extends React.PureComponent<Props, State> {
                 {typeof(item.caption)==="string"?<ListItemText primary={<div style={highlightStyle}>{item.caption}</div>}/>:item.caption}
             </div>
         </ListItem>;
-        if(item.nextLevel == null) return caption;
+        if(item.children == null) {
+            return caption;
+        }
         const collapse = <Collapse in={this.state.isExpanded[index]} timeout={"auto"} unmountOnExit key={1}>
-            <NestedList items={item.nextLevel} path={isInPath?this.props.path.slice(1):[]} onRequestPathChange={this.handleChildrenPathChange[index]} indentLevel={indentLevel+1}/>
+            <NestedList items={item.children} path={isInPath?this.getPath().slice(1):[]} onRequestPathChange={this.handleChildrenPathChange[index]} indentLevel={indentLevel+1}/>
         </Collapse>;
         return [caption, collapse];
     }

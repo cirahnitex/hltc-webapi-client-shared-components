@@ -1,216 +1,91 @@
 import * as React from 'react';
-import NestedList, {ListEntry} from './NestedList';
-import {style} from "typestyle";
-import {Caption, Title} from "../typographies";
-import MenuIcon from "@material-ui/icons/Menu";
-import Typography from "@material-ui/core/Typography/Typography";
-import {grey} from "@material-ui/core/colors";
-import Divider from "@material-ui/core/Divider/Divider";
-import AppBar from "@material-ui/core/AppBar/AppBar";
-import Toolbar from "@material-ui/core/Toolbar/Toolbar";
-import IconButton from "@material-ui/core/IconButton/IconButton";
 import Hidden from "@material-ui/core/Hidden/Hidden";
 import Drawer from "@material-ui/core/Drawer/Drawer";
+import {Theme} from "@material-ui/core/styles";
+import createStyles from "@material-ui/core/styles/createStyles";
+import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 
-type AddonToReactElement = (addonWrap: HTMLDivElement) => React.ReactElement<any>;
+type SlotProps = {children:React.ReactFragment}
 
-export interface NavItem {
-    caption: string | React.ReactFragment,
-    content:
-        // this menu has sub-items. please enumerate children
-        NavItem[]
+export const AppBarSlot = (props:SlotProps) => {
+    const child = React.Children.only(props.children);
+    if(child.props.position == null || child.props.position === 'fixed') {
+        console.warn("LeftNavFramework: Your AppBar should not have position=fixed. Otherwise the all bar will cover the drawer.");
+    }
+    return <>{child}</>;
+};
 
-        // this menu has a main view
-        | React.ReactElement<any>
+export const DrawerSlot = (props:SlotProps) => {
+    return <>{props.children}</>;
+};
 
-        // this menu has a main view and it also need to add some addons to the AppBar
-        // so please specify a function that returns the main view,
-        // while also being able to access the addon wrap
-        // I know this is non-functional, sorry in advance.
-        // but its handy to use a "Portal" to move your addons into addon wrap
-        | AddonToReactElement,
-}
+export const MainSlot = (props:SlotProps) => {
+    return <>{props.children}</>;
+};
 
-export interface Props {
-    title: string,
-    subTitle?: string,
-    items: NavItem[]
-}
 
 interface State {
     path: number[]
-    mobileOpen: boolean
     appBarAddonWrapEl: HTMLDivElement|null;
 }
 
-function convertToListEntry(navItem:NavItem):ListEntry {
-    if(navItem.content instanceof Array) {
-        const content = navItem.content as NavItem[];
-        return {
-            caption: navItem.caption,
-            nextLevel: content.map((x:NavItem):ListEntry=>convertToListEntry(x))
-        }
-    }
-    else {
-        return {
-            caption: navItem.caption,
-            nextLevel: null
-        }
-    }
-}
-
 const drawerWidth = 240;
-const breakpointCss = "@media (min-width: 960px)";
-const mediumCss = "@media (min-width: 600px)";
-const classes = {
-    root: style({flexGrow: 1,
-        overflow: 'hidden',
+const styles = (theme:Theme) => createStyles({
+    root: {flexGrow: 1,
         position: 'relative',
         display: 'flex',
         width: '100%',
         flexDirection: 'column'
-    }),
-    appBar: style({
+    },
+    appBar: {
         position: 'absolute',
-        marginLeft: drawerWidth,
-        $nest: {
-            [breakpointCss]: {
-                width: `calc(100% - ${drawerWidth}px) !important`,
-            }
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            left: drawerWidth,
+            width: `calc(100% - ${drawerWidth}px) !important`,
         }
-    }),
-    appBarAddonsWrap: style({
-        flexGrow: 1,
-        display: 'flex',
-        flexDirection: "column",
-    }),
-    navIconHide: style({
-        $nest: {
-            [breakpointCss]: {
-                display: 'none !important' as any,
-            },
-        }
-    }),
-    drawerPaper: style({
+    },
+    drawerPaper: {
         width: drawerWidth,
         minHeight: '100vh',
-        $nest: {
-            [breakpointCss]: {
-                position: 'relative !important' as any,
-            },
-        }
-    }),
-    drawerTitleWrap:style({
-        height: 64,
-        padding: "0 16px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center"
-    }),
-    title: style({
-        padding: '0 8px',
-    }),
-    content: style({
+        [theme.breakpoints.up('md')]: {
+            position: 'relative !important' as any,
+        },
+    },
+    content: {
         flexGrow: 1,
         padding: "72px 24px 16px 24px",
         display: 'flex',
         flexDirection: 'column',
-        $nest: {
-            [mediumCss]: {
-                padding: "80px 32px 16px 32px",
-            },
-            [breakpointCss]: {
-                marginLeft: `${drawerWidth}px`,
-            },
-        }
-    })
-};
+        [theme.breakpoints.up('sm')]: {
+            padding: "80px 32px 16px 32px",
+        },
+        [theme.breakpoints.up('md')]: {
+            marginLeft: `${drawerWidth}px`,
+        },
+    }
+});
 
-export default class LeftNavFramework extends React.PureComponent<Props, State> {
+export interface Props extends WithStyles<typeof styles> {
+    drawerOpen: boolean,
+    onRequestDrawerToggle: ()=>void,
+    children: React.ReactFragment
+}
+
+class LeftNavFramework extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
-
-        // find the first nav item as default
-        if(props.items.length<=0) throw new Error("nav item cannot be empty");
-        let path = [0];
-        let item = props.items[0];
-        while(item.content instanceof Array) {
-            item = item.content[0];
-            path = [...path, 0];
-        }
-
-        this.state = {
-            path,
-            mobileOpen: false,
-            appBarAddonWrapEl: null
-        }
-    }
-    handlePathChange = (path:number[]) => this.setState({path});
-    getPathItem(path: number[], navItems:NavItem[]):NavItem|null {
-        let navItem: NavItem = {
-            caption: this.props.title,
-            content: navItems
-        };
-        for(const index of path) {
-            if(navItem.content instanceof Array) {
-                if(navItem.content.length<=index) return null;
-                navItem = navItem.content[index];
-            }
-            else {
-                return navItem;
-            }
-        }
-        return navItem;
-    }
-    handleDrawerToggle = () => {
-        this.setState({ mobileOpen: !this.state.mobileOpen });
-    };
-    handleAppBarAddonEl = (node:HTMLDivElement|null)=>node && this.setState({appBarAddonWrapEl:node});
-    renderMain(content:React.ReactElement<any> | AddonToReactElement) {
-        if(typeof(content) === 'function') {
-            const addonEl = this.state.appBarAddonWrapEl;
-            return addonEl?content(addonEl):null;
-        }
-        else {
-            return content;
-        }
     }
     render() {
-        const drawer = <div>
-            <div className={classes.drawerTitleWrap}>
-                <Typography variant={"title"} style={{color:grey[700]}}>{this.props.title}</Typography>
-                {this.props.subTitle != null && <Caption>{this.props.subTitle}</Caption>}
-            </div>
-            <Divider />
-            <NestedList items={this.props.items.map(x=>convertToListEntry(x))}
-                        path={this.state.path} onRequestPathChange={this.handlePathChange}/>
-        </div>;
-
-        const navItem = this.getPathItem(this.state.path, this.props.items);
-
-        const appBarAddon = <div className={classes.appBarAddonsWrap} ref={this.handleAppBarAddonEl} />;
-
+        const children = React.Children.toArray(this.props.children);
+        const classes = this.props.classes;
         return <div className={classes.root}>
-            <AppBar className={classes.appBar}>
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={this.handleDrawerToggle}
-                        className={classes.navIconHide}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Title className={classes.title}>{navItem?navItem.caption:""}</Title>
-                    {appBarAddon}
-                </Toolbar>
-            </AppBar>
             <Hidden mdUp>
                 <Drawer
                     variant="temporary"
                     anchor={'left'}
-                    open={this.state.mobileOpen}
-                    onClose={this.handleDrawerToggle}
+                    open={this.props.drawerOpen}
+                    onClose={this.props.onRequestDrawerToggle}
                     classes={{
                         paper: classes.drawerPaper,
                     }}
@@ -218,7 +93,7 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
                         keepMounted: true, // Better open performance on mobile.
                     }}
                 >
-                    {drawer}
+                    {children.filter(x=>typeof(x)==='object' && x.type===DrawerSlot)}
                 </Drawer>
             </Hidden>
             <Hidden smDown implementation="css">
@@ -230,12 +105,17 @@ export default class LeftNavFramework extends React.PureComponent<Props, State> 
                     }}
                     style={{position:"fixed"}}
                 >
-                    {drawer}
+                    {children.filter(x=>typeof(x)==='object' && x.type===DrawerSlot)}
                 </Drawer>
             </Hidden>
+            <div className={classes.appBar}>
+                {children.filter(x=>(typeof(x) === 'object' && x.type === AppBarSlot))}
+            </div>
             <main className={classes.content}>
-                {navItem && !(navItem.content instanceof Array) && this.renderMain(navItem.content)}
+                {children.filter(x=>typeof(x)==='object' && x.type===MainSlot)}
             </main>
         </div>
     }
 }
+
+export default withStyles(styles)(LeftNavFramework);

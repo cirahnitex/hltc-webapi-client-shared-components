@@ -1,9 +1,10 @@
 import * as React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import BasicAppBar from './BasicAppBar';
+import {AppBarProps} from "@material-ui/core/AppBar";
 
 
-interface Props {
+interface Props extends AppBarProps {
     icon: React.ReactElement<any>;
     onIconClick?: ()=>any;
     title: string;
@@ -11,11 +12,11 @@ interface Props {
 }
 
 function IconAppBar(props:Props) {
-    const { title, icon, onIconClick, children } = props;
+    const { title, icon, onIconClick, children, ...others } = props;
     const leftWidget = <IconButton color="inherit" onClick={onIconClick}>
         {icon}
     </IconButton>;
-    return <BasicAppBar title={title} leftWidget={leftWidget}>
+    return <BasicAppBar title={title} leftWidget={leftWidget} {...others}>
         {children}
     </BasicAppBar>;
 }

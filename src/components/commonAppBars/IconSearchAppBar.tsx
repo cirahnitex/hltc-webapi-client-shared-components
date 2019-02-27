@@ -2,8 +2,9 @@ import * as React from 'react';
 import IconAppBar from "./IconAppBar";
 import SearAppBarAddon from "./SearchAppBarAddon";
 import {style} from "typestyle";
+import {AppBarProps} from "@material-ui/core/AppBar";
 
-interface Props {
+interface Props extends AppBarProps{
     icon: React.ReactElement<any>;
     onIconClick: ()=>any;
     title: string;

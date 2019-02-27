@@ -1,14 +1,14 @@
 import * as React from 'react';
 import Input from '@material-ui/core/Input';
 import { fade } from '@material-ui/core/styles/colorManipulator';
-import {Theme, withStyles} from '@material-ui/core/styles';
+import {Theme, WithStyles, withStyles} from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import {CSSProperties} from "@material-ui/core/styles/withStyles";
+import createStyles from "@material-ui/core/styles/createStyles";
 
-const styles = (theme:Theme) => ({
+const styles = (theme:Theme) => createStyles({
     grow: {
         flexGrow: 1,
-    } as CSSProperties,
+    },
     search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -16,7 +16,7 @@ const styles = (theme:Theme) => ({
         '&:hover': {
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
-    } as CSSProperties,
+    },
     searchIcon: {
         width: theme.spacing.unit * 5,
         height: '100%',
@@ -25,11 +25,11 @@ const styles = (theme:Theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-    } as CSSProperties,
+    },
     inputRoot: {
         color: 'inherit',
         width: '100%',
-    } as CSSProperties,
+    },
     inputInput: {
         paddingTop: theme.spacing.unit,
         paddingRight: theme.spacing.unit,
@@ -47,11 +47,10 @@ const styles = (theme:Theme) => ({
                 width: 200,
             },
         },
-    } as CSSProperties,
+    },
 });
 
-interface Props {
-    classes: Record<string, string>;
+interface Props extends WithStyles<typeof styles> {
     searchValue?: string;
     onSearchValueChange?: (x:string)=>any;
 }
