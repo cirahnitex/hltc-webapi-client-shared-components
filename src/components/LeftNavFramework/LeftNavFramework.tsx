@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Hidden from "@material-ui/core/Hidden/Hidden";
-import Drawer from "@material-ui/core/Drawer/Drawer";
+import Hidden from "@material-ui/core/Hidden";
+import Drawer from "@material-ui/core/Drawer";
 import {Theme} from "@material-ui/core/styles";
 import createStyles from "@material-ui/core/styles/createStyles";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
@@ -8,7 +8,7 @@ import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 type SlotProps = {children:React.ReactFragment}
 
 export const AppBarSlot = (props:SlotProps) => {
-    const child = React.Children.only(props.children);
+    const child = React.Children.only<any>(props.children);
     if(child.props.position == null || child.props.position === 'fixed') {
         console.warn("LeftNavFramework: Your AppBar should not have position=fixed. Otherwise the all bar will cover the drawer.");
     }
@@ -77,7 +77,7 @@ class LeftNavFramework extends React.PureComponent<Props, State> {
         super(props);
     }
     render() {
-        const children = React.Children.toArray(this.props.children);
+        const children = React.Children.toArray<any>(this.props.children);
         const classes = this.props.classes;
         return <div className={classes.root}>
             <Hidden mdUp>

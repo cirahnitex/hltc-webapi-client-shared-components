@@ -1,5 +1,5 @@
 import React from 'react';
-import MaskedInput from "react-text-mask";
+import MaskedInput from 'react-text-mask';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -22,6 +22,7 @@ interface TextMaskCustomProps {
     inputRef: (ref: HTMLInputElement | null) => void;
 }
 
+
 function TextMaskCustom(props: TextMaskCustomProps) {
     const {inputRef, ...other} = props;
 
@@ -32,6 +33,7 @@ function TextMaskCustom(props: TextMaskCustomProps) {
                 inputRef(ref ? ref.inputElement : null);
             }}
             mask={emailMask}
+            placeholderChar={'\u2000'}
             showMask
         />
     );
@@ -42,6 +44,7 @@ interface Props {
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
 
 const EmailInput = (props: Props) => {
     const classes = useStyles();
@@ -58,9 +61,4 @@ const EmailInput = (props: Props) => {
     </div>
 };
 
-function validateEmail(email: string) {
-    return email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
-}
-
 export default EmailInput;
-export {validateEmail};

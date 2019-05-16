@@ -2,7 +2,7 @@ import * as React from 'react';
 import Typography from "@material-ui/core/Typography/Typography";
 import {grey} from "@material-ui/core/colors";
 import {Caption} from "../typographies";
-import Divider from "@material-ui/core/Divider/Divider";
+import Divider from "@material-ui/core/Divider";
 import createStyles from "@material-ui/core/styles/createStyles";
 import withStyles, { WithStyles} from "@material-ui/core/styles/withStyles";
 
@@ -27,7 +27,7 @@ type Props = {
 
 const DrawerTitle = ({text, secondaryText, classes}:Props & WithStyles<typeof styles>)=> <div>
     <div className={classes.drawerTitleWrap}>
-        <Typography variant={"title"} style={{color:grey[700]}}>{text}</Typography>
+        <Typography variant={"h6"} style={{color:grey[700]}}>{text}</Typography>
         {secondaryText != null && <Caption>{secondaryText}</Caption>}
     </div>
     <Divider />

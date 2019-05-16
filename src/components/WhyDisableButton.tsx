@@ -1,6 +1,6 @@
 import * as React from 'react';
 import DebounceButton, {Props as DebounceBtnProps} from "./DebounceButton";
-import Tooltip from "@material-ui/core/Tooltip/Tooltip";
+import Tooltip from "@material-ui/core/Tooltip";
 
 interface Props extends DebounceBtnProps {
     disableReason: string|null;

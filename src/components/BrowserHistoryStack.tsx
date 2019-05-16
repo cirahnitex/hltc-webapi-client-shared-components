@@ -13,8 +13,8 @@ const stateToPushBuffer: number[] = [];
 function executeStatePushFromBuffer() {
     let id:number|undefined;
     while((id = stateToPushBuffer.pop()) !== undefined) {
-        history.replaceState(id, undefined, `#${id}`);
-        history.pushState(id+1, undefined, `#${id+1}`);
+        history.replaceState(id, "", `#${id}`);
+        history.pushState(id+1, "", `#${id+1}`);
     }
 }
 function queueState(state:number) {

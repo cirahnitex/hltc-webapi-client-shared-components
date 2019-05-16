@@ -33,7 +33,7 @@ export default class TextEditor extends React.PureComponent<Props, State> {
         return <div className={rootCss}>
             <textarea value={editingValue} onChange={this.handleEditingValueChange}/>
             <div style={{height:8}} />
-            <Button color={"primary"} disabled={value === editingValue} onClick={this.handleSubmit} variant={"raised"} size={"small"}>SAVE</Button>
+            <Button color={"primary"} disabled={value === editingValue} onClick={this.handleSubmit} variant={"contained"} size={"small"}>SAVE</Button>
         </div>
     }
 }

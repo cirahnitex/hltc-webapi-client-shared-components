@@ -18,7 +18,7 @@ const styles = (theme:Theme) => createStyles({
         },
     },
     searchIcon: {
-        width: theme.spacing.unit * 5,
+        width: theme.spacing(5),
         height: '100%',
         position: 'absolute',
         pointerEvents: 'none',
@@ -31,10 +31,10 @@ const styles = (theme:Theme) => createStyles({
         width: '100%',
     },
     inputInput: {
-        paddingTop: theme.spacing.unit,
-        paddingRight: theme.spacing.unit,
-        paddingBottom: theme.spacing.unit,
-        paddingLeft: theme.spacing.unit * 5,
+        paddingTop: theme.spacing(1),
+        paddingRight: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        paddingLeft: theme.spacing(5),
         transition: theme.transitions.create('width'),
         fontSize: '16px',
         width: 60,

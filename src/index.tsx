@@ -4,6 +4,7 @@ import {createStyles, Theme, WithStyles} from "@material-ui/core";
 import withStyles, {ClassNameMap} from "@material-ui/core/styles/withStyles";
 import Api from "./util/Api";
 import EmailInput from "./components/EmailInput";
+import FormattedInputs from "./scratch"
 interface Props {}
 
 interface State {}
@@ -18,7 +19,10 @@ class App extends React.PureComponent<Props,State> {
     }
 
     render() {
-        return <EmailInput />
+        return <div>
+            <EmailInput label={"email"} />
+            <FormattedInputs/>
+        </div>
     }
 }
 

@@ -20,7 +20,7 @@ function BasicAppBar(props:Props) {
         <AppBar {...others}>
             <Toolbar>
                 {leftWidget}
-                <Typography className={titleCss} variant="title" color="inherit" noWrap>
+                <Typography className={titleCss} variant="h6" color="inherit" noWrap>
                     {title}
                 </Typography>
                 {children}

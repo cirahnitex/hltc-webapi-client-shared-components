@@ -1,6 +1,6 @@
 import * as React from 'react';
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
-import Button from "@material-ui/core/Button/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Button from "@material-ui/core/Button";
 
 const delayRandomly = ()=>new Promise(resolve=>setTimeout(resolve,500+Math.random()*1000));
 

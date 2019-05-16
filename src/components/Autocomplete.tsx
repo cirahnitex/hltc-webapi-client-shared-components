@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Downshift, {ControllerStateAndHelpers} from 'downshift';
-import MenuItem from "@material-ui/core/MenuItem/MenuItem";
-import TextField from "@material-ui/core/TextField/TextField";
-import Paper from "@material-ui/core/Paper/Paper";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
 
 
 function renderSuggestion(suggestion: string, index: number, itemProps: any, highlightedIndex: number|null, selectedValue: string) {

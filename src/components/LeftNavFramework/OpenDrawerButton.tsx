@@ -1,6 +1,6 @@
 import * as React from 'react';
 import MenuIcon from "@material-ui/icons/Menu";
-import IconButton from "@material-ui/core/IconButton/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 import {style} from "typestyle";
 import createStyles from "@material-ui/core/styles/createStyles";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";

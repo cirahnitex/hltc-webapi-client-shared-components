@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import CloseIcon from '@material-ui/icons/Close';
-import Snackbar from "@material-ui/core/Snackbar/Snackbar";
-import SnackbarContent from "@material-ui/core/SnackbarContent/SnackbarContent";
-import IconButton from "@material-ui/core/IconButton/IconButton";
+import Snackbar from "@material-ui/core/Snackbar";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
+import IconButton from "@material-ui/core/IconButton";
 import {style} from "typestyle";
 
 const Styles = {

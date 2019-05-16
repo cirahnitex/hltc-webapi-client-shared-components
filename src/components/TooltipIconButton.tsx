@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Tooltip from "@material-ui/core/Tooltip/Tooltip";
-import IconButton, {IconButtonProps} from "@material-ui/core/IconButton/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton, {IconButtonProps} from "@material-ui/core/IconButton";
 
 interface Props extends IconButtonProps {
     title: string;

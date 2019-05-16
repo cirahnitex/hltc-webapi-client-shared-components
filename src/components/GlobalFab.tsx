@@ -1,14 +1,14 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
-import Zoom from "@material-ui/core/Zoom/Zoom";
-import Button, {ButtonProps} from "@material-ui/core/Button/Button";
+import Zoom from "@material-ui/core/Zoom";
+import Fab, {FabProps} from "@material-ui/core/Fab";
 
 interface State {
-    fab: ButtonProps | null;
-    existingFab: ButtonProps | null;
+    fab: FabProps | null;
+    existingFab: FabProps | null;
 }
 
-function shallowEqual(x:ButtonProps|null, y:ButtonProps|null) {
+function shallowEqual(x:FabProps|null, y:FabProps|null) {
     if(x===y) return true;
     if(!x || !y) return false;
     const keys = Object.keys(x);
@@ -19,7 +19,7 @@ function shallowEqual(x:ButtonProps|null, y:ButtonProps|null) {
     return true;
 }
 
-function top(fabStack:(ButtonProps|null)[]):ButtonProps | null {
+function top(fabStack:(FabProps|null)[]):FabProps | null {
     if(fabStack.length<=0) return null;
     return fabStack[fabStack.length-1];
 }
@@ -41,7 +41,7 @@ class FabWrap extends React.PureComponent<{}, State> {
             existingFab:fab
         });
     };
-    setFab(fab:ButtonProps|null) {
+    setFab(fab:FabProps|null) {
         if(this.state.existingFab) {
             if(!shallowEqual(fab, this.state.existingFab)) {
                this.setState({fab});
@@ -59,20 +59,20 @@ class FabWrap extends React.PureComponent<{}, State> {
             return <div />
         }
         return <Zoom in={shallowEqual(fab, existingFab)} onExited={this.handleZoomExit}>
-            <Button variant={"fab"} {...existingFab} />
+            <Fab {...existingFab} />
         </Zoom>
     }
 }
 
-let fabStack: (ButtonProps|null)[] = [];
+let fabStack: (FabProps|null)[] = [];
 
-function setGlobalFab(fab: ButtonProps | null) {
+function setGlobalFab(fab: FabProps | null) {
     if(!FabWrap.instance) return;
     FabWrap.instance.setFab(fab);
     fabStack.push(fab);
 }
 
-function removeGlobalFab(fab: ButtonProps | null) {
+function removeGlobalFab(fab: FabProps | null) {
     if(!FabWrap.instance) return;
     if(shallowEqual(top(fabStack), fab)) {
         fabStack.pop();
@@ -95,7 +95,7 @@ root.style.zIndex = '1400'; // because material-ui model zIndex=1300, FAB need t
 document.body.appendChild(root);
 ReactDom.render(<FabWrap />, root);
 
-type Props = ButtonProps;
+type Props = FabProps;
 
 class NilFab extends React.PureComponent<{},{}> {
     componentWillUnmount() {

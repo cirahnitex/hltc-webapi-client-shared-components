@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import Snackbar from "@material-ui/core/Snackbar/Snackbar";
+import Snackbar from "@material-ui/core/Snackbar";
 
 interface Props {}
 interface State {

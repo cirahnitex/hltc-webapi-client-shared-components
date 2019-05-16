@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import Table from '@material-ui/core/Table';
 
-import * as classNames from 'classnames';
+import classNames from 'classnames';
 
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import TableCell from "@material-ui/core/TableCell/TableCell";
@@ -91,7 +91,7 @@ function createEnhancedTableHeadComponent<ItemType>(columnData:FieldConfig<ItemT
                             return (
                                 <TableCell
                                     key={column.field}
-                                    numeric={column.numeric}
+                                    align={column.numeric?"right":"left"}
                                     padding={column.disablePadding ? 'none' : 'default'}
                                     sortDirection={orderBy === column.field ? order : false}
                                 >
@@ -158,11 +158,11 @@ function createEnhancedToolbar<ItemType>() {
             >
                 <div className={classes.title}>
                     {numSelected && numSelected > 0 ? (
-                        <Typography color="inherit" variant="subheading">
+                        <Typography color="inherit" variant="subtitle1">
                             {numSelected} selected
                         </Typography>
                     ) : (
-                        <Typography variant="title">{props.title}</Typography>
+                        <Typography variant="h6">{props.title}</Typography>
                     )}
                 </div>
                 <div className={classes.spacer} />
@@ -589,13 +589,13 @@ export default function createEnhancedTableComponent<ItemType, IDType extends nu
                                             selected={isSelected}
                                         >
                                             {numSelected != null && <TableCell padding="checkbox" style={{width:48}}>
-                                                <Checkbox checked={isSelected} onChange={e=>this.handleRowCheckChange(getID(n))}/>
+                                                <Checkbox checked={isSelected} onChange={(e:any)=>this.handleRowCheckChange(getID(n))}/>
                                             </TableCell>}
                                             {columns.map((column, columnIndex)=><TableCell
                                                 key={column.field}
                                                 padding={column.disablePadding?"none":undefined}
-                                                numeric={column.numeric}
-                                                onClick={column.editComponent?(e)=>this.handleItemEdit(e.currentTarget,getID(n), columnIndex, n[column.field], n):undefined}
+                                                align={column.numeric?"right":"left"}
+                                                onClick={column.editComponent?(e:any)=>this.handleItemEdit(e.currentTarget,getID(n), columnIndex, n[column.field], n):undefined}
                                                 style={column.editComponent?{cursor:"pointer"}:undefined}
                                             >{this.renderCellDisplay(n, columnIndex)}</TableCell>)}
                                         </TableRow>

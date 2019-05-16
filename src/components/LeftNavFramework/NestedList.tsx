@@ -1,9 +1,9 @@
 import * as React from 'react';
 import pink from "@material-ui/core/colors/pink";
-import ListItem from "@material-ui/core/ListItem/ListItem";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import Collapse from "@material-ui/core/Collapse/Collapse";
-import List from "@material-ui/core/List/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Collapse from "@material-ui/core/Collapse/"
+import List from "@material-ui/core/List";
 
 export type ListEntry = {
     caption: string | React.ReactFragment,
