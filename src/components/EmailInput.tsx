@@ -6,18 +6,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import emailMask from 'text-mask-addons/dist/emailMask';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        container: {
-            display: 'flex',
-            flexWrap: 'wrap',
-        },
-        formControl: {
-            margin: theme.spacing(1),
-        },
-    }),
-);
-
 interface TextMaskCustomProps {
     inputRef: (ref: HTMLInputElement | null) => void;
 }
@@ -44,18 +32,15 @@ interface Props {
 }
 
 const EmailInput = (props: Props) => {
-    const classes = useStyles();
-    return <div className={classes.container}>
-        <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="formatted-text-mask-input">{props.label || "Email"}</InputLabel>
-            <Input
-                value={props.value}
-                inputComponent={TextMaskCustom}
-                onChange={props.onChange}
-                id="formatted-text-mask-input"
-            />
-        </FormControl>
-    </div>
+    return <FormControl>
+        <InputLabel htmlFor="formatted-text-mask-input">{props.label || "Email"}</InputLabel>
+        <Input
+            value={props.value}
+            inputComponent={TextMaskCustom}
+            onChange={props.onChange}
+            id="formatted-text-mask-input"
+        />
+    </FormControl>
 };
 
 function validateEmail(email: string) {
