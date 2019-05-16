@@ -5,10 +5,8 @@ import FormControl from "@material-ui/core/FormControl/FormControl";
 import InputLabel from "@material-ui/core/InputLabel/InputLabel";
 import Input from "@material-ui/core/Input/Input";
 
-class EmailMask extends React.Component {
-    render() {
-        return <TextMask {...this.props} mask={emailMask} showMask/>
-    }
+function EmailMask({inputRef, ...others}:any) {
+    return <TextMask {...others} mask={emailMask} showMask/>
 }
 
 interface Props {

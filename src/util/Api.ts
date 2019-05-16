@@ -48,13 +48,11 @@ export default class Api {
     }
 
     /**
-     *
      * @param {string} path the path after http://hltc.cs.ust.hk/webapi
      * @param data post data
-     * @returns {Promise<any>}
      */
-    static request(path: string, data?: any) {
-        // make request from RN when possible
+    static request(path: string, data?: any):Promise<Element> {
+        // make request from React Native when possible
         if((window as any).NativeInject != null) {
             return (window as any).NativeInject.apiRequest(path, data);
         }
@@ -70,14 +68,18 @@ export default class Api {
         };
         return fetch(Api.resolve(path), fetchOptions)
             .then(r => {
-                if (r.ok) return r.json();
-                throw new ServerError("Server respond with status code " + r.status);
-            })
-            .then(json => {
-                if (!json.success) {
-                    throw new ServerError(json.message);
+                if (r.ok) return r.text();
+                if (r.status === 500) {
+                    return r.text().then(text=>{throw new ServerError(text);});
                 }
-                return json;
+                throw new ServerError("Server responded with status code " + r.status);
+            })
+            .then(text => {
+                const root = new DOMParser().parseFromString(text, 'text/xml').firstElementChild;
+                if(root == null || root.tagName === 'parsererror') {
+                    throw new ServerError("Server responded with invalid XML document");
+                }
+                return root;
             });
     }
 }

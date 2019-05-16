@@ -11,14 +11,15 @@ export interface Props {
     spinnerSize?: number,
     dense?: boolean,
     color?: string,
-    raised?: boolean,
     variant?: string,
+    children?: React.ReactFragment,
 }
 interface State {
     loading: boolean,
     showLoadingAnimation: boolean,
 }
 class DebounceButton extends React.Component<Props, State> {
+    _isMounted = false;
     state: State;
     startAnimationTimeout: any;
     constructor(props:Props) {
@@ -29,11 +30,19 @@ class DebounceButton extends React.Component<Props, State> {
             showLoadingAnimation: false,
         }
     }
+    componentDidMount() {
+        this._isMounted = true;
+    }
+    componentWillMount(): void {
+        this._isMounted = false;
+    }
+
     async handleButtonClick() {
         if(this.state.loading) return;
         this.setState({loading:true});
 
         this.startAnimationTimeout = setTimeout(()=>{
+            if(!this._isMounted) return;
             this.setState({
                 showLoadingAnimation: true,
             })
@@ -42,8 +51,9 @@ class DebounceButton extends React.Component<Props, State> {
         const onClick = this.props.onClick || delayRandomly;
         const p = onClick();
         await p;
-        clearInterval(this.startAnimationTimeout);
+        clearTimeout(this.startAnimationTimeout);
         this.startAnimationTimeout = 0;
+        if(!this._isMounted) return;
         this.setState({loading:false,showLoadingAnimation:false});
     }
     render() {
@@ -53,7 +63,7 @@ class DebounceButton extends React.Component<Props, State> {
             left: '50%',
             transform:'translate(-50%,-50%)'
         } as React.CSSProperties;
-        const {disabled, onClick, spinnerSize, buttonComponent, children, color, raised, variant, ...others} = this.props;
+        const {disabled, onClick, spinnerSize, buttonComponent, children, color, variant, ...others} = this.props;
 
         if(buttonComponent && children) {
             console.warn("DebounceButton: children doesn't work with external buttonComponent. Consider putting children into buttonComponent instead.")
@@ -63,7 +73,7 @@ class DebounceButton extends React.Component<Props, State> {
             disabled: this.state.showLoadingAnimation || disabled,
             onClick:()=>this.handleButtonClick(),
             color: color as any,
-            variant: raised?"raised":variant,
+            variant: variant,
             ...others
         } as any;
         const button = buttonComponent ? React.cloneElement(buttonComponent,propsOnButton)
