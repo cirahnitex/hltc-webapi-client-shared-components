@@ -57,7 +57,6 @@ export default class Api {
             return (window as any).NativeInject.apiRequest(path, data);
         }
         if (typeof(data) === 'undefined') data = {};
-        data.format = "json";
         const fetchOptions: RequestInit = {
             credentials: 'include',
             method: 'post',
