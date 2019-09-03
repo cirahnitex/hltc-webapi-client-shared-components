@@ -6,8 +6,8 @@ function useWindowSize() {
 
     function getSize() {
         return {
-            width: isClient ? window.innerWidth : undefined,
-            height: isClient ? window.innerHeight : undefined
+            width: isClient ? document.body.clientWidth : undefined,
+            height: isClient ? document.body.clientHeight : undefined
         };
     }
 
@@ -76,7 +76,6 @@ export function ResponsiveColumnItem({columns, className, ...others}:ItemProps) 
     React.useEffect(()=>{
         if(width == null) return;
         if(el.current == null) return;
-        console.log(responsiveItemWidth(width, columns));
         el.current.style.width = responsiveItemWidth(width, columns) + 'px';
     }, [columns, width]);
     let combinedClassName = `lMyTMsT24aJwkm00-item`;
