@@ -1,5 +1,5 @@
 import React, {CSSProperties} from "react";
-import "./ResponsiveColumn.css";
+import "../../ResponsiveColumn.css";
 
 function useWindowSize() {
     const isClient = typeof window === 'object';
