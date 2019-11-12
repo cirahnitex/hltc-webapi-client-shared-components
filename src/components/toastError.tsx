@@ -27,7 +27,7 @@ class ErrorToast extends React.Component<{},State> {
             msg: "",
         }
     }
-    handleClose = (event:React.MouseEvent<HTMLElement>, reason?:string) => {
+    handleClose = (event:any, reason?:string) => {
         if (reason === 'clickaway') {
             return;
         }
@@ -63,6 +63,7 @@ class ErrorToast extends React.Component<{},State> {
             }}
             open={this.state.open}
             onClose={this.handleClose}
+            disableWindowBlurListener
         >
             <SnackbarContent
                 message={<span id="message-id">{this.state.msg}</span>}

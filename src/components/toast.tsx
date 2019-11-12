@@ -29,7 +29,7 @@ class Toast extends React.Component<Props, State> {
                 this.openLaterTimer = 0;
             },250);
         }
-        else if(!this.openLaterTimer) {
+        else if(this.openLaterTimer) {
             this.setState({msg:msg})
         }
         else {
@@ -52,6 +52,7 @@ class Toast extends React.Component<Props, State> {
             autoHideDuration={3000}
             onClose={this.handleClose}
             message={<span>{this.state.msg}</span>}
+            disableWindowBlurListener
         >
         </Snackbar>
     }
