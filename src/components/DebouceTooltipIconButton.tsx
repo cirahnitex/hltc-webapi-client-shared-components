@@ -1,6 +1,7 @@
 import * as React from 'react';
 import DebounceButton from "./DebounceButton";
 import TooltipIconButton from "./TooltipIconButton";
+import {PropTypes} from "@material-ui/core";
 
 interface Props {
     onClick: ()=>Promise<any>;
@@ -18,7 +19,7 @@ interface Props {
         | 'top-end'
         | 'top-start'
         | 'top';
-    color?: string;
+    color?: PropTypes.Color;
 }
 
 class DebouceTooltipIconButton extends React.Component<Props, {}> {
