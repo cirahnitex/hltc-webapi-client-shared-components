@@ -32,6 +32,7 @@ export default class Api {
         const pieces = [];
         for (let key in obj) {
             if (!obj.hasOwnProperty(key)) continue;
+            if(obj[key] == null) continue;
             pieces.push(encodeURIComponent(key) + "=" + encodeURIComponent(toString(obj[key])));
         }
 
@@ -42,6 +43,7 @@ export default class Api {
         const form = new FormData();
         for (let key in obj) {
             if (!obj.hasOwnProperty(key)) continue;
+            if(obj[key] == null) continue;
             form.append(key, obj[key]);
         }
         return form;
